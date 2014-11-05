@@ -100,30 +100,31 @@ $(document).ready(function() {
 
 	$('.source-select').change(function() {
 		selectedSource = $('.source-select option:selected').text();
+		$('.row.stats').remove();
 		$.get('api/sources?name=' + selectedSource, function(data) {
 			sourceData = data[0];
 			newData = sourceData;
 			drawCharts(selectedSource);
 			setHeader(selectedSource);
-			var keysToDelete = ['id', 'name', 'type'];
+			var keysToDelete = ['id', 'name', 'type', 'categories'];
 			$.each(keysToDelete, function(e, v) {
-				console.log(v);
 				delete newData[v];
 			});
-			$('.row.stats').remove();
-			$('.container').append("<div class='row stats'></div>");
-			$.each(newData, function(key, value) {
-				$('.row.stats').append(
-					"<div class='chart-wrapper three-col'>" +
-				    "<div class='chart-main'>" +
-				      "<p class='value'>" +
-				      	value +
-				      "</p>" +
-				    "</div>" +
-				    "<div class='chart-footer'>" + key + "</div>" +
-				  "</div>"
-				)
-			});
+			if(selectedSource) {
+				$('.container').append("<div class='row stats'></div>");
+				$.each(newData, function(key, value) {
+					$('.row.stats').append(
+						"<div class='chart-wrapper three-col'>" +
+					    "<div class='chart-main'>" +
+					      "<p class='value'>" +
+					      	value +
+					      "</p>" +
+					    "</div>" +
+					    "<div class='chart-footer'>" + key + "</div>" +
+					  "</div>"
+					)
+				});
+			}
 		});
 		query = '';
 		$('input[type="search"]').val('');
