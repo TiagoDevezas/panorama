@@ -1,0 +1,43 @@
+<h1><%= @source.name %></h1>
+
+<%= render 'partials/flash' %>
+
+<%= link_to 'Edit', edit_source_path %>
+
+<p>URL: <%= @source.url %></p>
+
+<h2>Feeds</h2>
+
+<% @source.feeds.each do |feed| %>
+	<h4><%= feed.name %></h4> 
+	<p><%= link_to feed.url, feed.url %> | <%= feed.articles.count %> artigos</p>
+	<table class="full-width">
+		<tbody>
+			<tr>
+				<th>Título</th>
+				<th>Publicada</th>
+				<th>Recolhida</th>
+				<th>Twitter</th>
+				<th>Facebook</th>
+				<th>Tópicos</th>
+				<th>Acções</th>
+			</tr>
+			<% feed.articles.each do |article| %>
+				<tr>
+					<td>
+
+	          <%= link_to article.title, article.url %>
+	        </td>
+					<td><%= article.pub_date %></td>
+					<td><%= article.created_at.in_time_zone('Lisbon') %></td>
+					<td><%= article.twitter_shares %></td>
+					<td><%= article.facebook_shares %></td>
+					<td><%= article.cats.map(&:name).join(', ') %></td>
+					<td><%= link_to 'Apagar', article_path(article),
+                    method: :delete, data: { confirm: 'Are you sure?' } %>
+          </td>
+				</tr>
+			<% end %>
+		</tbody>
+	</table>
+<% end %>

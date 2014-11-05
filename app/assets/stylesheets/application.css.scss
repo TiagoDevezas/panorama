@@ -1,0 +1,278 @@
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, vendor/assets/stylesheets,
+ * or vendor/assets/stylesheets of plugins, if any, can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the bottom of the
+ * compiled file so the styles you add here take precedence over styles defined in any styles
+ * defined in the other CSS/SCSS files in this directory. It is generally better to create a new
+ * file per style scope.
+ *
+ *= require_self
+ */
+
+@charset "utf-8";
+
+@import "c3";
+@import "bourbon";
+@import "base/grid-settings";
+@import "neat";
+@import "base/base";
+
+.container {
+	@include outer-container;
+}
+
+.success {
+  @extend %flash-success
+}
+
+.error {
+  @extend %flash-error
+}
+
+.text-stats {
+  @include span-columns(12);
+  @include media($large-screen-up) {
+    @include span-columns(8);
+    @include omega();
+  }
+//   .stat-box {
+//     @include span-columns(4);
+//     @include omega(3n);
+//     padding: 2em;
+//     border: 2px solid $medium-gray;
+//     background-color: $light-gray;
+//   }
+}
+
+table.full-width {
+  width: 100%;
+}
+
+.line {
+  fill: none;
+  stroke: #000;
+  stroke-width: 1.5px;
+}
+
+.line-legend, .bar-legend {
+  min-height: 1em;
+  list-style: none;
+  margin: 1em 0;
+  padding: 2em 2em 2em 1em;
+  border: 1px solid #efefef;
+  display: inline-block;
+  background: rgba(85, 169, 203, 0.1);
+  li span {
+    display: inline-block;
+    width: 2em;
+    height: 1em;
+    margin: 0 .5em 0 0;
+  }
+}
+
+// Chart wrapper styles
+
+.chart-wrapper {
+  border: 1px solid $light-gray;
+  border-radius: 3px;
+  margin-bottom: 0.7em;
+  .chart-title {
+    border-bottom: 1px solid $light-gray;
+    font-size: 1.1em;
+    padding: 0.5em 0.7em;
+  }
+  .chart-main {
+    padding: 0.5em;
+  }
+  .chart-footer {
+    border-top: 1px solid $light-gray;
+    background-color: lighten($light-gray, 10);
+    padding: 0.5em 0.7em;
+  }
+}
+
+.row {
+  @include row();
+}
+
+.button-group {
+  @include row();
+}
+
+.twelve-col {
+  @include span-columns(12);
+}
+
+.ten-col {
+  @include span-columns(10);
+}
+
+.eight-col {
+  @include span-columns(8);
+}
+
+.six-col {
+  @include span-columns(6);
+}
+
+.four-col {
+  @include span-columns(4);
+}
+
+.two-col {
+  @include span-columns(2);
+}
+
+.omega {
+  @include omega();
+}
+
+// .bar-chart {
+//   @include span-columns(12);
+// }
+
+// .bar-chart2 {
+//   @include span-columns(12);
+// }
+
+// .pie-chart {
+//   @include media($large-screen-up) {
+//     @include span-columns(4);
+//   }
+// }
+
+
+// Button Group Styles
+
+.button-group {
+  $button-group-background: $base-background-color;
+  $button-group-color: lighten($base-font-color, 30);
+  $button-group-border: 1px solid silver;
+  $button-group-inner-border: 1px solid lighten(silver, 18);
+  $button-group-background-checked: $base-accent-color;
+  $button-group-color-checked: white;
+  $button-group-border-checked: darken($button-group-background-checked, 15);
+  margin: 1em 0;
+
+  input {
+    display: none;
+  }
+
+  label {
+    margin-bottom: 0;
+
+    @include media($large-screen) {
+      float: left;
+    }
+
+    .button-group-item {
+      background: $button-group-background;
+      border-left: $button-group-border;
+      border-radius: 0;
+      border-right: $button-group-border;
+      color: $button-group-color;
+      cursor: pointer;
+      display: inline-block;
+      font-size: $base-font-size;
+      font-weight: normal;
+      line-height: 1;
+      padding: .75em 1em;
+      width: 100%;
+
+      @include media($large-screen) {
+        border-bottom: $button-group-border;
+        border-left: 0;
+        border-right: $button-group-inner-border;
+        border-top: $button-group-border;
+        width: auto;
+      }
+
+      &:hover {
+        background-color: darken($button-group-background, 3);
+      }
+    }
+
+    &:first-child .button-group-item {
+      border-top-left-radius: $base-border-radius;
+      border-top-right-radius: $base-border-radius;
+      border-top: $button-group-border;
+
+      @include media($large-screen) {
+        border-bottom-left-radius: $base-border-radius;
+        border-left: $button-group-border;
+        border-top-left-radius: $base-border-radius;
+        border-top-right-radius: 0;
+      }
+    }
+
+    &:last-child .button-group-item {
+      border-bottom-left-radius: $base-border-radius;
+      border-bottom-right-radius: $base-border-radius;
+      border-bottom: $button-group-border;
+
+      @include media($large-screen) {
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: $base-border-radius;
+        border-right: $button-group-border;
+        border-top-right-radius: $base-border-radius;
+      }
+    }
+
+    input:checked + .button-group-item {
+      background: $button-group-background-checked;
+      border: 1px solid $button-group-border-checked;
+      box-shadow: inset 0 1px 2px darken($button-group-background-checked, 10);
+      color: $button-group-color-checked;
+    }
+  }
+}
+
+
+// Search bar styles
+
+.search-bar {
+  $search-bar-border-color: $base-border-color;
+  $search-bar-border: 1px solid $search-bar-border-color;
+  $search-bar-background: lighten($search-bar-border-color, 10);
+
+  position: relative; 
+  //display: inline-block;
+  @include span-columns(5);
+  margin-bottom: 1em;
+
+  input {
+    @include box-sizing(border-box);
+    display: block;
+  }
+
+  div.search-and-submit {
+    position: relative;
+
+    input[type=search] {
+      @include appearance(none);
+      width: 100%;
+      padding: .5em .8em;
+      font-size: .9em;
+      font-style: italic;
+      border-radius: $base-border-radius;
+      margin: 0;
+    }
+
+    button[type=submit] {
+      @include position(absolute, 0em 0em 0em 0);
+      outline: none;
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+      padding: 5px 10px;
+
+      img {
+        height: 12px;
+        opacity: .7;
+      }
+    }
+  }
+}

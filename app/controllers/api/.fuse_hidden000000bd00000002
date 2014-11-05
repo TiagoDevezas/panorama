@@ -1,0 +1,12 @@
+module Api
+	class SourcesController < ApplicationController
+		respond_to :json
+
+		def index
+			@source = Source.find_by(name: params[:name])
+			respond_with @source
+		end
+
+	end
+
+end

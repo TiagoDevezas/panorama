@@ -1,0 +1,50 @@
+<h1>Dashboard</h1>
+
+<%= select_tag "sources", options_from_collection_for_select(@sources, "id", "name"), include_blank: true, class: 'source-select' %>
+
+<div class="search-bar">
+  <div class="search-and-submit">
+    <input type="search" placeholder="Pesquisar" />
+    <button type="submit">
+      <img src="https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/search-icon.png" alt="Search Icon">
+    </button>
+  </div>
+</div>
+
+<div class="row">
+  <div class="chart-wrapper ten-col">
+    <div class="chart-title">Artigos e Partilhas</div>
+    <div class="chart-main">
+    <div class="button-group">
+      <label>
+        <input type="radio" name="button-group" value="show-by-day" checked>
+        <span class="button-group-item">Dia</span>
+      </label>
+      <label>
+        <input type="radio" name="button-group" value="show-by-hour">
+        <span class="button-group-item">Hora</span>
+      </label>
+    </div>
+      <div class="bar-chart"></div>
+    </div>
+    <div class="chart-footer">Nome da fonte</div>
+  </div>
+
+  <div class="chart-wrapper two-col omega">
+    <div class="chart-title">Partilhas nas redes sociais</div>
+    <div class="chart-main">
+      <div class="pie-chart"></div>
+    </div>
+    <div class="chart-footer">Nome da fonte</div>
+  </div>
+</div>
+
+<div class="row"></div>
+
+<div class="text-stats"></div>
+
+<!-- <div class="pie-chart">
+	<canvas id="radar"></canvas>
+</div>
+ -->
+

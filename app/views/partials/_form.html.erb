@@ -1,0 +1,55 @@
+<% if @source.errors.any? %>
+<div class="error">
+	<ul>
+  <% @source.errors.full_messages.each do |msg| %>
+    <li><%= msg %></li>
+  <% end %>
+  <ul>
+</div>
+<% end %>
+
+<%= nested_form_for @source do |f| %>
+	
+	<p>
+		<%= f.label :source_type %>
+		<%= select(:source, :source_type, [['Jornal', 'newspaper'], ['Blog', 'blog']]) %>
+	</p>
+
+	<p>
+		<%= f.label :name %>
+		<%= f.text_field :name %>
+	</p>
+
+	<p>
+		<%= f.label :url %>
+		<%= f.text_field :url %>
+	</p>
+
+	<h2>Feeds</h2>
+
+	<%= f.fields_for :feeds do |feeds_form| %>
+		<p>
+			<%= feeds_form.label :name %>
+			<%= feeds_form.text_field :name %>
+		</p>
+		
+		<p>
+			<%= feeds_form.label :url %>
+			<%= feeds_form.text_field :url %>
+		</p>
+
+		<p>
+			<%= feeds_form.link_to_remove "Remove feed" %>
+		</p>
+
+	<% end %>
+
+	<p><%= f.link_to_add "Add a feed", :feeds %></p>
+
+	<p>
+		<%= f.submit %>
+	</p>
+
+<% end %>
+
+<%= link_to 'Back', sources_path %>

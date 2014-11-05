@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Panorama</title>
+  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
+  <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+  <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+  <script src="http://code.highcharts.com/highcharts.js"></script>
+  <%= csrf_meta_tags %>
+</head>
+<body>
+
+<div class="container">
+	<%= yield %>	
+</div>
+</body>
+</html>

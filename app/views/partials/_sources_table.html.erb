@@ -1,0 +1,28 @@
+<table class="full-width">
+	<tbody>
+		<tr>
+			<th>Nome</th>
+			<th>Feeds</th>
+			<th>Artigos</th>
+			<th>Twitter</th>
+			<th>Facebook</th>
+			<th>Última publicação</th>
+			<th>Acções</th>
+		</tr>
+		<% sources.each do |source| %>
+			<tr>
+				<td>
+          <%= link_to source.name, source %>
+        </td>
+				<td><%= source.feeds.count %></td>
+				<td><%= source.articles.count %></td>
+				<td><%= source.articles.map(&:twitter_shares).sum %></td>
+				<td><%= source.articles.map(&:facebook_shares).sum %></td>
+				<td><%= source.articles.first.pub_date %></td>
+				<td><%= link_to 'Editar', edit_source_path(source) %> | <%= link_to 'Apagar', source_path(source),
+                    method: :delete, data: { confirm: 'Are you sure?' } %>
+        </td>
+			</tr>
+		<% end %>
+	</tbody>
+</table>
