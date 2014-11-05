@@ -19,7 +19,7 @@ class Article < ActiveRecord::Base
   # }
 
   def self.find_articles_with(query)
-  	self.where("lower(title) LIKE ?", "%#{query.downcase}%")
+  	self.where("lower(title) LIKE ? OR lower(summary) LIKE ?", "%#{query.downcase}%", "%#{query.downcase}%")
   end
 
   def self.with_category(category)
@@ -28,7 +28,17 @@ class Article < ActiveRecord::Base
 
   def self.category_list
   	# not right yet
-  	Cat.joins(:articles).includes(:articles).map(&:name).join(', ')
+  	category_list = []
+  	articles_with_category = self.includes(:cats)
+  	articles_with_category.each do |article|
+  		article.cats.each { |cat| category_list << [ cat.name, cat.articles.count ] }
+  	end
+  	category_list = category_list.uniq.compact.sort_by { |e| e[1] }.reverse
+  	# category_list = []
+  	# self.all.each do |article|
+  	# 	article.cats.each { |cat| category_list << cat }
+  	# end
+  	# category_list = category_list.uniq.compact
   end
 
   def category_list

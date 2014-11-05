@@ -47,7 +47,7 @@ class Source < ActiveRecord::Base
 			num_days = (first_date.to_date - last_date.to_date)
 			avg_per_day = num_days > 0 ? (article_count / num_days).to_f.round(2) : article_count
 		elsif time_period == 'month'
-			num_months = (last_date.year * 12 + last_date.month) - (first_date.year * 12 + first_date.month).to_i
+			num_months = (first_date.year * 12 + first_date.month) - (last_date.year * 12 + last_date.month).to_i
 			avg_per_month = num_months > 0 ? article_count / num_months : 0
 		end		
 	end
@@ -85,11 +85,12 @@ class Source < ActiveRecord::Base
 						title: entry.title,
 						url: entry.url,
 						pub_date: entry.published,
+						summary: entry.summary,
 						feed_id: feed.id
 					)
 					if !a.new_record
 						entry.categories.each do |category|
-							cat = Cat.where(name: category.downcase).first_or_create
+							cat = Cat.where(name: category.downcase.strip).first_or_create
 							cat.articles << a
 						end
 					end
@@ -108,11 +109,12 @@ class Source < ActiveRecord::Base
 								title: entry.title,
 								url: entry.url,
 								pub_date: entry.published,
+								summary: entry.summary,
 								feed_id: feed.id
 							)
 							if !a.new_record?
 								entry.categories.each do |category|
-									cat = Cat.where(name: category.downcase).first_or_create
+									cat = Cat.where(name: category.downcase.strip).first_or_create
 									cat.articles << a
 								end
 							end				

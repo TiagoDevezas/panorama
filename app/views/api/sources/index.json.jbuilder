@@ -20,4 +20,8 @@ json.array! @sources do |source|
 	json.avg_shares avg_shares
 	json.avg_day source.average_articles_by('day')
 	json.avg_month source.average_articles_by('month')
+	json.categories source.articles.category_list.each do |category|
+		json.name category[0].strip
+		json.count category[1]
+	end
 end

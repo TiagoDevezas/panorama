@@ -80,6 +80,10 @@ table.full-width {
   border: 1px solid $light-gray;
   border-radius: 3px;
   margin-bottom: 0.7em;
+  &.three-col {
+    @include span-columns(3);
+    @include omega(4n);
+  }
   .chart-title {
     border-bottom: 1px solid $light-gray;
     font-size: 1.1em;
@@ -87,6 +91,12 @@ table.full-width {
   }
   .chart-main {
     padding: 0.5em;
+    p.value {
+      font-size: 4em;
+      font-weight: bold;
+      margin-bottom: 0;
+      text-align: center;
+    }
   }
   .chart-footer {
     border-top: 1px solid $light-gray;
@@ -122,6 +132,10 @@ table.full-width {
 .four-col {
   @include span-columns(4);
 }
+
+// .three-col {
+//   @include span-columns(3);
+// }
 
 .two-col {
   @include span-columns(2);

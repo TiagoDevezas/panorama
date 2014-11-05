@@ -6,6 +6,7 @@ json.array! @articles do |article|
 	json.id article.id
 	json.title article.title
 	json.url article.url
+	json.summary article.summary
 	json.twitter_shares twitter_shares
 	json.facebook_shares facebook_shares
 	json.total_shares total_shares

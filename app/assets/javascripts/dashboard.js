@@ -102,8 +102,28 @@ $(document).ready(function() {
 		selectedSource = $('.source-select option:selected').text();
 		$.get('api/sources?name=' + selectedSource, function(data) {
 			sourceData = data[0];
+			newData = sourceData;
 			drawCharts(selectedSource);
 			setHeader(selectedSource);
+			var keysToDelete = ['id', 'name', 'type'];
+			$.each(keysToDelete, function(e, v) {
+				console.log(v);
+				delete newData[v];
+			});
+			$('.row.stats').remove();
+			$('.container').append("<div class='row stats'></div>");
+			$.each(newData, function(key, value) {
+				$('.row.stats').append(
+					"<div class='chart-wrapper three-col'>" +
+				    "<div class='chart-main'>" +
+				      "<p class='value'>" +
+				      	value +
+				      "</p>" +
+				    "</div>" +
+				    "<div class='chart-footer'>" + key + "</div>" +
+				  "</div>"
+				)
+			});
 		});
 		query = '';
 		$('input[type="search"]').val('');
@@ -114,7 +134,6 @@ $(document).ready(function() {
 	function drawCharts(source) {
 		drawTotalsCharts(source);
 		drawPieChart(source);
-		console.log(selectedSource);
 		if (selectedSource === '') {
 			setHeader('Todas');
 		}
@@ -203,7 +222,7 @@ $(document).ready(function() {
 
 	function setHeader(text) {
 		if (text !== '') {
-			$('.chart-footer').html(text);
+			$('.chart-title').html(text);
 		}
 	}
 
