@@ -31,7 +31,7 @@ class Article < ActiveRecord::Base
   	category_list = []
   	articles_with_category = self.includes(:cats)
   	articles_with_category.each do |article|
-  		article.cats.each { |cat| category_list << [ cat.name, cat.articles.count ] }
+  		article.cats.each { |cat| category_list << [ cat.name, cat.articles.size ] }
   	end
   	category_list = category_list.uniq.compact.sort_by { |e| e[1] }.reverse
   	# category_list = []
@@ -71,6 +71,20 @@ class Article < ActiveRecord::Base
 	# 	end
 	# 	categories
 	# end
+
+	def self.average_articles_by(time_period)
+		articles = self.all
+		article_count = articles.count
+		first_date = articles.first.pub_date ? articles.first.pub_date : articles.first.updated_at
+		last_date = articles.last.pub_date ? articles.last.pub_date : articles.last.updated_at
+		if time_period == 'day'
+			num_days = (first_date.to_date - last_date.to_date)
+			avg_per_day = num_days > 0 ? (article_count / num_days).to_f.round(2) : article_count
+		elsif time_period == 'month'
+			num_months = (first_date.year * 12 + first_date.month) - (last_date.year * 12 + last_date.month).to_i
+			avg_per_month = num_months > 0 ? article_count / num_months : 0
+		end		
+	end
 
 	def self.get_count_by(time_period)
 		time_and_totals = []

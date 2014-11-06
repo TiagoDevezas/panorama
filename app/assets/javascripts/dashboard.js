@@ -165,6 +165,9 @@ $(document).ready(function() {
 				},
 				//onclick: function(d, i) { changeChart(d, sourceParam); }
 			},
+			subchart: {
+				show: true
+			},
 			axis: {
 				x: {
 					type: 'timeseries',
@@ -179,11 +182,11 @@ $(document).ready(function() {
 	function drawPieChart(source) {
 		var source = source;
 		var sourceParam = source ? "?name=" + source : '';
-		var searchParam = query !== '' ? "&q=" + query : '';
+		//var searchParam = query !== '' ? "&q=" + query : '';
 		var pieChart = c3.generate({
 			bindto: '.pie-chart',
 			data: {
-				url: 'api/sources' + sourceParam + searchParam,
+				url: 'api/sources' + sourceParam,
 				mimeType: 'json',
 				keys: {
 					value: ['twitter_shares', 'facebook_shares']
@@ -255,8 +258,15 @@ $(document).ready(function() {
 					facebook_shares: 'Partilhas no Facebook'
 				},
 			},
+			subchart: {
+				show: true
+			},
 			axis: {
 				x: {
+					label: {
+						text: 'Hora',
+						position: 'outer-center' 
+					},
 					tick: {
 						format: function(x) { 
 							return x;

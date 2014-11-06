@@ -9,7 +9,6 @@ module Api
 
 			query_params = params[:q]
 
-			@sources = Source.all
 
 			if name_params
 				@sources = Source.where(name: name_params)

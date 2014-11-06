@@ -8,6 +8,7 @@ module Api
 			source = params[:source]
 			by = params[:by]
 			query = params[:q]
+			category = params[:category]
 			
 			@days_and_totals = []
 
@@ -18,6 +19,9 @@ module Api
 				if query
 					@articles = @articles.find_articles_with(query)
 				end
+				if category
+					@articles = @articles.with_category(category)
+				end
 				@days_and_totals = @articles.get_count_by('day')
 				if by && by == 'month'
 					@days_and_totals = @articles.get_count_by('month')
@@ -25,11 +29,14 @@ module Api
 					@days_and_totals = @articles.get_count_by('hour')
 				end
 			else
+				@articles = Article.all
 				if query
 					@articles = Article.find_articles_with(query)
-				else
-					@articles = Article.all
 				end
+				if category
+					@articles = @articles.with_category(category)
+				end
+
 				check_time_constraints
 				@days_and_totals = @articles.get_count_by('day')
 				if by && by == 'month'
