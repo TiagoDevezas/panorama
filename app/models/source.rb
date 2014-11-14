@@ -5,7 +5,8 @@ class Source < ActiveRecord::Base
 	has_many :feeds, dependent: :destroy
 	has_many :articles, through: :feeds
 	accepts_nested_attributes_for :feeds, allow_destroy: true
-	validates :name, :url, :source_type, presence: true
+	validates :name, :url, presence: true, uniqueness: true
+	validates :source_type, presence: true 
 
 	# def get_unique_days
 	# 	self.articles.pluck(:pub_date).map { |date|
@@ -41,20 +42,20 @@ class Source < ActiveRecord::Base
 	def self.all_sources_data
 		total_feeds = Feed.count
 		articles = Article.all
-		sources = Source.all
 		total_items = articles.count
 		twitter_shares = articles.map(&:twitter_shares).sum
 		facebook_shares = articles.map(&:facebook_shares).sum
 		total_shares = twitter_shares + facebook_shares
 		#total_shares = articles.get_count_by('day').map { |h| h[:total_shares]}.sum
 		#twitter_shares = articles.get_count_by('day').map { |h| h[:twitter_shares]}.sum
-		avg_twitter_shares = twitter_shares / total_items
+		avg_twitter_shares = (twitter_shares / total_items.to_f).round(2)
 		#facebook_shares = articles.get_count_by('day').map { |h| h[:facebook_shares]}.sum
-		avg_facebook_shares = facebook_shares / total_items
-		avg_shares = total_shares / total_items
+		avg_facebook_shares = (facebook_shares / total_items.to_f).round(2)
+		avg_shares = (total_shares / total_items.to_f).round(2)
 		avg_day = articles.average_articles_by('day')
 		avg_month = articles.average_articles_by('month')
-		categories = Cat.all.map { |c| [c.name, c.articles.size] }.uniq.compact.sort_by { |e| e[1] }.reverse
+		sources = Source.all
+		categories = Cat.get_names_and_article_counts
 		data = Hash[
 						name: 'All',
 						total_feeds: total_feeds,
@@ -67,8 +68,11 @@ class Source < ActiveRecord::Base
 						avg_shares: avg_shares,
 						avg_day: avg_day,
 						avg_month: avg_month,
+						sources: sources,
 						categories: categories	
 					]
+		data_array = []
+		data_array << data
 	end
 
 	# def average_articles_by(time_period)
@@ -114,14 +118,14 @@ class Source < ActiveRecord::Base
 				parsed_feed = Feedjira::Feed.fetch_and_parse feed.url
 				feed_entries = parsed_feed.entries
 				feed_entries.each do |entry|
-					a = Article.new(
+					a = Article.create(
 						title: entry.title,
 						url: entry.url,
 						pub_date: entry.published,
 						summary: entry.summary,
 						feed_id: feed.id
 					)
-					if !a.new_record
+					if !a.new_record?
 						entry.categories.each do |category|
 							cat = Cat.where(name: category.downcase.strip).first_or_create
 							cat.articles << a
@@ -137,7 +141,7 @@ class Source < ActiveRecord::Base
 					parsed_feed = Feedjira::Feed.fetch_and_parse feed.url
 					feed_entries = parsed_feed.entries
 					feed_entries.each do |entry|
-						if feed.articles.where(title: entry.title, url: entry.url).blank?
+						if feed.articles.where(url: entry.url).blank?
 							a = Article.create(
 								title: entry.title,
 								url: entry.url,

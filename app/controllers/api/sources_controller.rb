@@ -7,10 +7,13 @@ module Api
 
 			type_params = params[:type]
 
-			query_params = params[:q]
+			all_source_data = Source.all_sources_data
 
+			if !name_params && !type_params
+				@sources_list = all_source_data[0][:sources]
+			end
 
-			if name_params
+			if name_params != 'All'
 				@sources = Source.where(name: name_params)
 			end
 

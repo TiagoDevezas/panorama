@@ -4,7 +4,8 @@ class Article < ActiveRecord::Base
   belongs_to :feed
   has_and_belongs_to_many :cats
 
-  validates :title, :url, presence: true, uniqueness: true
+  validates :url, presence: true, uniqueness: true
+  validates :title, presence: true
 
   default_scope { order('pub_date DESC') }
 
@@ -23,15 +24,17 @@ class Article < ActiveRecord::Base
   end
 
   def self.with_category(category)
-  	Cat.find_by_name!(category).articles
+  	categories = Cat.find_by_name(category)
+  	if categories
+  		articles = categories.articles
+		end
   end
 
   def self.category_list
-  	# not right yet
   	category_list = []
-  	articles_with_category = self.includes(:cats)
+  	articles_with_category = self.all.includes(:cats)
   	articles_with_category.each do |article|
-  		article.cats.each { |cat| category_list << [ cat.name, cat.articles.size ] }
+  		article.cats.map { |cat| category_list << [ cat.name, cat.articles.size ] }
   	end
   	category_list = category_list.uniq.compact.sort_by { |e| e[1] }.reverse
   	# category_list = []

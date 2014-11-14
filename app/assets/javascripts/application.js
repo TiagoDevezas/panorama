@@ -12,7 +12,5 @@
 //
 //= require jquery
 //= require jquery_ujs
-//# require turbolinks
 //= require jquery_nested_form
-//= require Chart.min.js
 //= require_tree .

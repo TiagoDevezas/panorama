@@ -1,4 +1,9 @@
-if @sources
+if @sources_list
+	json.array! @sources_list do |source|
+		json.name source.name
+		json.type source.source_type
+	end
+elsif @sources
 	json.array! @sources do |source|
 		article_count = source.articles.count
 		twitter_shares = source.articles.map(&:twitter_shares).sum
@@ -28,6 +33,7 @@ if @sources
 	end
 else
 	source = Source.all_sources_data
+	json.array! source do |source|
 		json.name source[:name]
 		json.total_feeds source[:total_feeds]
 		json.total_items source[:total_items]
@@ -39,8 +45,13 @@ else
 		json.avg_shares source[:avg_shares]
 		json.avg_day source[:avg_day]
 		json.avg_month source[:avg_month]
+		#json.sources source[:sources].each do |s|
+			#json.name s.name
+			#json.type s.source_type
+		#end
 		json.categories source[:categories].each do |category|
 			json.name category[0]
 			json.count category[1]
 		end
+	end
 end

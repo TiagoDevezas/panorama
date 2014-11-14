@@ -15,13 +15,13 @@ module Api
 			if source
 				source = Source.find_by(name: source)
 				@articles = source.articles
-				check_time_constraints
 				if query
 					@articles = @articles.find_articles_with(query)
 				end
 				if category
 					@articles = @articles.with_category(category)
 				end
+				check_time_constraints
 				@days_and_totals = @articles.get_count_by('day')
 				if by && by == 'month'
 					@days_and_totals = @articles.get_count_by('month')
@@ -36,7 +36,6 @@ module Api
 				if category
 					@articles = @articles.with_category(category)
 				end
-
 				check_time_constraints
 				@days_and_totals = @articles.get_count_by('day')
 				if by && by == 'month'

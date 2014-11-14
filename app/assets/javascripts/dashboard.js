@@ -108,7 +108,7 @@ $(document).ready(function() {
 			setHeader(selectedSource);
 			var keysToDelete = ['id', 'name', 'type', 'categories'];
 			$.each(keysToDelete, function(e, v) {
-				delete newData[v];
+				if (newData) { delete newData[v] }
 			});
 			if(selectedSource) {
 				$('.container').append("<div class='row stats'></div>");
@@ -148,7 +148,7 @@ $(document).ready(function() {
 			bindto: '.bar-chart',
 			data: {
 				x: 'time',
-				url: 'api/totals?since=2014-10-15' + sourceParam + timePeriod + searchParam,
+				url: 'api/totals?since=2014-10-15' + sourceParam + searchParam,
 				mimeType: 'json',
 				keys: {
 					value: ['time', 'articles', 'twitter_shares', 'facebook_shares']
@@ -204,7 +204,6 @@ $(document).ready(function() {
 				}
 			}				
 			}
-
 		});
 	}
 
@@ -238,7 +237,7 @@ $(document).ready(function() {
 		//startDate = formatDate(data.x);
 		//endDate = new Date(dateObj.setDate(dateObj.getDate() + 1));
 		//endDate = formatDate(endDate);
-		c3.generate({
+		var barChart = c3.generate({
 			bindto: '.bar-chart',
 			data: {
 				x: 'time',
@@ -275,7 +274,6 @@ $(document).ready(function() {
 				}
 			}
 		});
-
 	}
 
 });
