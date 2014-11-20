@@ -1,7 +1,7 @@
 if @sources_list
 	json.array! @sources_list do |source|
-		json.name source.name
-		json.type source.source_type
+		json.name source[:name]
+		json.type source[:type]
 	end
 elsif @sources
 	json.array! @sources do |source|

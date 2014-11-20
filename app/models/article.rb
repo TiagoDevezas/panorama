@@ -24,25 +24,32 @@ class Article < ActiveRecord::Base
   end
 
   def self.with_category(category)
-  	categories = Cat.find_by_name(category)
-  	if categories
-  		articles = categories.articles
-		end
+  	articles = self.joins(:cats).where('cats.name LIKE ?', category)
   end
 
   def self.category_list
   	category_list = []
   	articles_with_category = self.all.includes(:cats)
-  	articles_with_category.each do |article|
-  		article.cats.map { |cat| category_list << [ cat.name, cat.articles.size ] }
-  	end
-  	category_list = category_list.uniq.compact.sort_by { |e| e[1] }.reverse
-  	# category_list = []
-  	# self.all.each do |article|
-  	# 	article.cats.each { |cat| category_list << cat }
-  	# end
-  	# category_list = category_list.uniq.compact
+  	categories = articles_with_category.map { |a| a.cats }.flatten.uniq.compact
+  	categories.map { |c| category_list << [c.name, c.articles.size]}
+  	category_list = category_list.sort_by { |e| e[1] }.reverse
   end
+
+  # def self.with_category(category)
+  # 	categories = Cat.find_by_name(category)
+  # 	if categories
+  # 		articles = categories.articles
+		# end
+  # end
+
+  # def self.category_list
+  # 	category_list = []
+  # 	articles_with_category = self.all.includes(:cats)
+  # 	articles_with_category.each do |article|
+  # 		article.cats.map { |cat| category_list << [ cat.name, cat.articles.size ] }
+  # 	end
+  # 	category_list = category_list.uniq.compact.sort_by { |e| e[1] }.reverse
+  # end
 
   def category_list
   	cats.map(&:name).join(', ')
@@ -100,7 +107,7 @@ class Article < ActiveRecord::Base
 				#articles_no_pub_date = self.where(pub_date: nil).where("articles.created_at BETWEEN ? AND ?", 
 					#day.to_datetime, day.to_datetime + 1)
 				#articles += articles_no_pub_date
-				count = articles.count
+				count = articles.size
 				twitter_shares = articles.map(&:twitter_shares).sum
 				facebook_shares = articles.map(&:facebook_shares).sum
 				total_shares = twitter_shares + facebook_shares
@@ -119,7 +126,7 @@ class Article < ActiveRecord::Base
 				# Workaround for P3 articles without publishing date. We use the updated_at date instead of the inexisting pub_date
 				#articles_no_pub_date = self.where(pub_date: nil).where("extract(month from created_at) = ?", month)
 				#articles += articles_no_pub_date
-				count = articles.count
+				count = articles.size
 				twitter_shares = articles.map(&:twitter_shares).sum
 				facebook_shares = articles.map(&:facebook_shares).sum
 				total_shares = twitter_shares + facebook_shares
@@ -138,7 +145,7 @@ class Article < ActiveRecord::Base
 				# Workaround for P3 articles without publishing date. We use the updated_at date instead of the inexisting pub_date
 				#articles_no_pub_date = self.where(pub_date: nil).where("extract(hour from created_at) = ?", hour)
 				#articles += articles_no_pub_date
-				count = articles.count
+				count = articles.size
 				twitter_shares = articles.map(&:twitter_shares).sum
 				facebook_shares = articles.map(&:facebook_shares).sum
 				total_shares = twitter_shares + facebook_shares

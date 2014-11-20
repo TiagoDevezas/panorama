@@ -7,10 +7,11 @@ module Api
 
 			type_params = params[:type]
 
-			all_source_data = Source.all_sources_data
 
 			if !name_params && !type_params
-				@sources_list = all_source_data[0][:sources]
+				@sources_list = Source.all.map { |source| { name: source.name, type: source.source_type }}
+				#all_source_data = Source.all_sources_data
+				#@sources_list = all_source_data[0][:sources]
 			end
 
 			if name_params != 'All'

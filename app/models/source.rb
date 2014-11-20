@@ -55,7 +55,7 @@ class Source < ActiveRecord::Base
 		avg_day = articles.average_articles_by('day')
 		avg_month = articles.average_articles_by('month')
 		sources = Source.all
-		categories = Cat.get_names_and_article_counts
+		categories = articles.category_list
 		data = Hash[
 						name: 'All',
 						total_feeds: total_feeds,
