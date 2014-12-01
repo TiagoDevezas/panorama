@@ -14,5 +14,6 @@ json.array! @articles do |article|
 	json.feed_id article.feed_id
 	json.feed article.feed.name
 	json.source article.feed.source.name
+	json.source_type article.feed.source.source_type
 	json.categories article.cats, :name
 end

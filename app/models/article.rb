@@ -1,4 +1,4 @@
-	require 'open-uri'
+require 'open-uri'
 class Article < ActiveRecord::Base
 	after_save :get_social_shares
   belongs_to :feed

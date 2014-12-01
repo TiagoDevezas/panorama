@@ -48,7 +48,8 @@ module Api
 			else
 				@articles = Article.all
 				if query
-					@articles = Article.find_articles_with(query)
+					@articles = @articles.find_articles_with(query)
+					@get_percent = true
 				end
 				if category
 					@articles = @articles.with_category(category)
@@ -56,8 +57,10 @@ module Api
 				check_time_constraints
 				@days_and_totals = @articles.get_count_by('day')
 				if by && by == 'month'
+					@get_percent = false
 					@days_and_totals = @articles.get_count_by('month')
 				elsif by && by == 'hour'
+					@get_percent = false
 					@days_and_totals = @articles.get_count_by('hour')
 				end
 			end

@@ -113,11 +113,18 @@ class Source < ActiveRecord::Base
 	
 	private
 
+	# Ugly hack to save feeds incorrectly identified as iTunes RSS
+	classes_without_itunes = Feedjira::Feed.feed_classes.reject { |klass| klass == Feedjira::Parser::ITunesRSS }
+	Feedjira::Feed.instance_variable_set(:'@feed_classes', classes_without_itunes)
+
 		def fetch_articles
 			self.feeds.each do |feed|
 				parsed_feed = Feedjira::Feed.fetch_and_parse feed.url
 				feed_entries = parsed_feed.entries
 				feed_entries.each do |entry|
+					if entry.published
+						next if entry.published.to_date < DateTime.new(2014, 10, 01).to_date || entry.published.to_date > Date.tomorrow
+					end
 					a = Article.create(
 						title: entry.title,
 						url: entry.url,
@@ -141,6 +148,9 @@ class Source < ActiveRecord::Base
 					parsed_feed = Feedjira::Feed.fetch_and_parse feed.url
 					feed_entries = parsed_feed.entries
 					feed_entries.each do |entry|
+						if entry.published
+							next if entry.published.to_date < DateTime.new(2014, 10, 01).to_date || entry.published.to_date > Date.tomorrow
+						end
 						if feed.articles.where(url: entry.url).blank?
 							a = Article.create(
 								title: entry.title,

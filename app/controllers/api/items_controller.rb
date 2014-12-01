@@ -11,7 +11,7 @@ module Api
 			query = params[:q]
 			category = params[:category]
 
-			if limit == 'off'
+			if limit.to_i == -1
 				limit = nil
 			elsif limit.to_i >= 1
 				limit = limit
