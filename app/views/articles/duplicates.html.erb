@@ -1,0 +1,5 @@
+<h1>Duplicates</h1>
+
+<% @articles.each do |article| %>
+<p><%= article.title %> <%= article.url %> <%= article.feed.name %> <%= article.feed.source.name %></p>
+<% end %>

@@ -11,6 +11,10 @@
 /db/*.sqlite3
 /db/*.sqlite3-journal
 
+# Ignore Sublime Text project files
+*.sublime-project
+*.sublime-workspace
+
 # Ignore all logfiles and tempfiles.
 /log/*.log
 /tmp

@@ -11,14 +11,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141105181105) do
+ActiveRecord::Schema.define(version: 20141209174759) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "articles", force: true do |t|
     t.string   "title"
-    t.string   "url"
+    t.text     "url"
     t.datetime "pub_date"
     t.integer  "feed_id"
     t.datetime "created_at"
@@ -49,6 +49,8 @@ ActiveRecord::Schema.define(version: 20141105181105) do
     t.integer  "source_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.datetime "last_modified"
+    t.datetime "last_crawled"
   end
 
   add_index "feeds", ["source_id"], name: "index_feeds_on_source_id", using: :btree

@@ -1,8 +1,9 @@
 class SourcesController < ApplicationController
 
 	def index
-		@newspapers = Source.where(source_type: 'newspaper').joins(:articles).includes(:articles).order('pub_date desc')
-		@blogs = Source.where(source_type: 'blog').joins(:articles).includes(:articles).order('pub_date desc')
+		@newspapers = Source.where(source_type: 'newspaper') #.joins(:articles).includes(:articles).order('pub_date desc')
+		@blogs = Source.where(source_type: 'blog') #.joins(:articles).includes(:articles).order('pub_date desc')
+		@international = Source.where(source_type: 'international') #.joins(:articles).includes(:articles).order('pub_date desc')
 	end
 
 	def new

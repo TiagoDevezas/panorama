@@ -18,7 +18,7 @@
 				<td><%= source.articles.count %></td>
 				<td><%= source.articles.map(&:twitter_shares).sum %></td>
 				<td><%= source.articles.map(&:facebook_shares).sum %></td>
-				<td><%= source.articles.first.pub_date %></td>
+				<td><%= !source.articles.blank? ? source.articles.order('pub_date DESC').first.pub_date : '' %></td>
 				<td><%= link_to 'Editar', edit_source_path(source) %> | <%= link_to 'Apagar', source_path(source),
                     method: :delete, data: { confirm: 'Are you sure?' } %>
         </td>

@@ -1,10 +1,9 @@
-require 'open-uri'
 class Article < ActiveRecord::Base
-	after_save :get_social_shares
+	after_commit :get_social_shares
   belongs_to :feed
   has_and_belongs_to_many :cats
 
-  validates :url, presence: true, uniqueness: true
+  validates :url, uniqueness: true, presence: true 
   validates :title, presence: true
 
   default_scope { order('pub_date DESC') }
@@ -19,9 +18,23 @@ class Article < ActiveRecord::Base
 		# 			start_day.to_datetime, start_day.to_datetime + 1)
   # }
 
+  def self.find_duplicates
+  	dups_ids = []
+  	grouped_by_title = all.order('created_at DESC').group_by { |article| [article.url, article.feed.source_id] }
+  	grouped_by_title.values.each do |group|
+			first_record = group.shift
+			group.each { |double| dups_ids << double.id }
+  	end
+  	dups_ids
+  end
+
   def self.find_articles_with(query)
   	self.where("lower(title) LIKE ? OR lower(summary) LIKE ?", "%#{query.downcase}%", "%#{query.downcase}%")
   end
+
+  def self.with_source_type(type)
+  	self.joins(:feed => :source).where('source_type LIKE ?', type)
+	end
 
   def self.with_category(category)
   	articles = self.joins(:cats).where('cats.name LIKE ?', category)
@@ -158,6 +171,22 @@ class Article < ActiveRecord::Base
 				]
 			end
 		end
+		if time_period == 'week'
+			(1..7).to_a.each do |weekday|
+				articles = self.where("extract(ISODOW from pub_date) = ?", weekday)
+				count = articles.size
+				twitter_shares = articles.map(&:twitter_shares).sum
+				facebook_shares = articles.map(&:facebook_shares).sum
+				total_shares = twitter_shares + facebook_shares
+				time_and_totals << Hash[ 
+					time: weekday, 
+					count: count, 
+					twitter_shares: twitter_shares, 
+					facebook_shares: facebook_shares, 
+					total_shares: total_shares 
+				]
+			end
+		end
 		time_and_totals
 	end
 
@@ -165,6 +194,7 @@ class Article < ActiveRecord::Base
   	twitter_url = "https://cdn.api.twitter.com/1/urls/count.json?url="
   	facebook_url = "https://api.facebook.com/method/links.getStats?format=json&urls="
   	article_url = ERB::Util.url_encode(self.url)
+  	#article_url = self.url
   	twitter_response = open(twitter_url + article_url).read
   	twitter_shares = JSON.parse(twitter_response)['count']
   	facebook_response = open(facebook_url + article_url).read
@@ -173,11 +203,11 @@ class Article < ActiveRecord::Base
   	#self.update(twitter_shares: shares['twitter'], facebook_shares: shares['facebook'])
   	if self.twitter_shares != shares['twitter']
   		self.update(twitter_shares: shares['twitter'])
-  		puts "Twitter shares changed"
+  		#puts "Twitter shares changed"
   	end
   	if self.facebook_shares != shares['facebook']
   		self.update(facebook_shares: shares['facebook'])
-  		puts "Facebook shares changed"
+  		#puts "Facebook shares changed"
 		end
 	end
 

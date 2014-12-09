@@ -1,5 +1,5 @@
 class Source < ActiveRecord::Base
-	after_save :fetch_articles
+	#after_save :fetch_articles
 
 
 	has_many :feeds, dependent: :destroy
@@ -113,6 +113,30 @@ class Source < ActiveRecord::Base
 	
 	private
 
+	def self.resolve_url(entry_url)
+		url = Addressable::URI.parse(entry_url)
+		http_client = HTTPClient.new
+		max_redirects = 2
+		begin
+			resp = http_client.get(url)
+			resolved_url = resp.header['Location']
+			if resolved_url.length > 0
+				while max_redirects != 0
+					new_location = http_client.get(resolved_url[0]).header['Location']
+					break if new_location.length == 0
+					resolved_url = new_location
+					max_redirects -= 1
+				end
+				resolved_url[0]
+			else
+				entry_url
+			end
+		rescue => e
+			puts "Can't resolve URL, Error #{e}"
+			entry_url
+		end
+	end
+
 	# Ugly hack to save feeds incorrectly identified as iTunes RSS
 	classes_without_itunes = Feedjira::Feed.feed_classes.reject { |klass| klass == Feedjira::Parser::ITunesRSS }
 	Feedjira::Feed.instance_variable_set(:'@feed_classes', classes_without_itunes)
@@ -121,23 +145,40 @@ class Source < ActiveRecord::Base
 			self.feeds.each do |feed|
 				parsed_feed = Feedjira::Feed.fetch_and_parse feed.url
 				feed_entries = parsed_feed.entries
+				feed.update(last_modified: last_modified_time)
 				feed_entries.each do |entry|
 					if entry.published
-						next if entry.published.to_date < DateTime.new(2014, 10, 01).to_date || entry.published.to_date > Date.tomorrow
+						next if entry.published.to_date < Date.today - 3.days || entry.published.to_date > Date.tomorrow
 					end
-					a = Article.create(
-						title: entry.title,
-						url: entry.url,
-						pub_date: entry.published,
-						summary: entry.summary,
-						feed_id: feed.id
-					)
-					if !a.new_record?
-						entry.categories.each do |category|
-							cat = Cat.where(name: category.downcase.strip).first_or_create
-							cat.articles << a
+					resolved_url = resolve_url(entry.url)
+					Article.where(url: resolved_url).first_or_create do |article|
+						article.title = entry.title
+						article.url = resolved_url
+						article.pub_date = entry.published
+						article.summary = entry.summary
+						article.feed_id = feed.id
+
+						if entry.categories.length > 0
+							entry.categories.each do |category|
+								cat = Cat.where(name: category.downcase.strip).first_or_create
+								cat.articles << article
+							end
 						end
-					end
+
+						end
+					# a = Article.new(
+					# 	title: entry.title,
+					# 	url: resolved_url,
+					# 	pub_date: entry.published,
+					# 	summary: entry.summary,
+					# 	feed_id: feed.id
+					# )
+					# if a.save
+					# 	entry.categories.each do |category|
+					# 		cat = Cat.where(name: category.downcase.strip).first_or_create
+					# 		cat.articles << a
+					# 	end
+					# end	
 				end
 			end
 		end
@@ -147,25 +188,33 @@ class Source < ActiveRecord::Base
 				source.feeds.each do |feed|
 					parsed_feed = Feedjira::Feed.fetch_and_parse feed.url
 					feed_entries = parsed_feed.entries
-					feed_entries.each do |entry|
-						if entry.published
-							next if entry.published.to_date < DateTime.new(2014, 10, 01).to_date || entry.published.to_date > Date.tomorrow
-						end
-						if feed.articles.where(url: entry.url).blank?
-							a = Article.create(
-								title: entry.title,
-								url: entry.url,
-								pub_date: entry.published,
-								summary: entry.summary,
-								feed_id: feed.id
-							)
-							if !a.new_record?
-								entry.categories.each do |category|
-									cat = Cat.where(name: category.downcase.strip).first_or_create
-									cat.articles << a
+					last_modified_time = parsed_feed.last_modified ? parsed_feed.last_modified.to_time.utc : nil
+					puts "Feed #{feed.name} from #{feed.source.name} has etag #{parsed_feed.etag} and  was last modified on #{last_modified_time} || #{feed.last_modified}"
+					if feed.last_modified != last_modified_time || last_modified_time == nil
+						feed.update(last_modified: last_modified_time)
+						feed_entries.each do |entry|
+							if entry.published
+								next if entry.published.to_date < Date.today - 3.days || entry.published.to_date > Date.tomorrow
+							end
+							resolved_url = resolve_url(entry.url)
+							Article.where(url: resolved_url).first_or_create do |article|
+								article.title = entry.title
+								article.url = resolved_url
+								article.pub_date = entry.published
+								article.summary = entry.summary
+								article.feed_id = feed.id
+
+								if entry.categories.length > 0
+									entry.categories.each do |category|
+										cat = Cat.where(name: category.downcase.strip).first_or_create
+										cat.articles << article
+									end
 								end
-							end				
-						end	
+
+							end
+						end
+					else
+						puts "Feed #{feed.name} from #{feed.source.name} has no new entries"
 					end
 				end				
 			end

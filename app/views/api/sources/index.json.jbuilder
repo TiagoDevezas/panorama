@@ -15,6 +15,7 @@ elsif @sources
 
 		json.id source.id
 		json.name source.name
+		json.url source.url
 		json.type source.source_type
 		json.total_feeds source.feeds.count
 		json.total_items article_count

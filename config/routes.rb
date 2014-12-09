@@ -10,7 +10,9 @@ Rails.application.routes.draw do
   resources :sources
   resources :articles
 
-  get 'dashboard' => 'dashboard#index'
+  get 'articles/duplicates' => 'articles#show'
+
+  #get 'dashboard' => 'dashboard#index'
 
   root 'sources#index'
 
