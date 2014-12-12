@@ -4,6 +4,14 @@
 		"selected_items":
 		[
 			[
+				"Date",
+				"DateTime"
+			],
+			[
+				"first",
+				"first_feed"
+			],
+			[
 				"resolve",
 				"resolved_url"
 			],
@@ -351,7 +359,7 @@
 			"file": "app/views/api/sources/index.json.jbuilder",
 			"settings":
 			{
-				"buffer_size": 1987,
+				"buffer_size": 2066,
 				"line_ending": "Unix"
 			}
 		},
@@ -367,7 +375,7 @@
 			"file": "app/controllers/api/items_controller.rb",
 			"settings":
 			{
-				"buffer_size": 991,
+				"buffer_size": 1583,
 				"line_ending": "Unix"
 			}
 		},
@@ -375,15 +383,7 @@
 			"file": "app/models/article.rb",
 			"settings":
 			{
-				"buffer_size": 7058,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "Gemfile",
-			"settings":
-			{
-				"buffer_size": 1473,
+				"buffer_size": 7366,
 				"line_ending": "Unix"
 			}
 		},
@@ -399,7 +399,7 @@
 			"file": "app/controllers/sources_controller.rb",
 			"settings":
 			{
-				"buffer_size": 1115,
+				"buffer_size": 1121,
 				"line_ending": "Unix"
 			}
 		},
@@ -412,18 +412,10 @@
 			}
 		},
 		{
-			"file": "db/migrate/20141204154917_change_url_to_text_in_articles.rb",
-			"settings":
-			{
-				"buffer_size": 121,
-				"line_ending": "Unix"
-			}
-		},
-		{
 			"file": "app/views/partials/_sources_table.html.erb",
 			"settings":
 			{
-				"buffer_size": 793,
+				"buffer_size": 847,
 				"line_ending": "Unix"
 			}
 		},
@@ -431,7 +423,15 @@
 			"file": "app/models/source.rb",
 			"settings":
 			{
-				"buffer_size": 6570,
+				"buffer_size": 8091,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "app/models/feed.rb",
+			"settings":
+			{
+				"buffer_size": 132,
 				"line_ending": "Unix"
 			}
 		},
@@ -471,7 +471,7 @@
 			"file": "config/routes.rb",
 			"settings":
 			{
-				"buffer_size": 1855,
+				"buffer_size": 1903,
 				"line_ending": "Unix"
 			}
 		},
@@ -487,7 +487,15 @@
 			"file": "lib/tasks/panorama.rake",
 			"settings":
 			{
-				"buffer_size": 394,
+				"buffer_size": 625,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/feed_crawler.rb",
+			"settings":
+			{
+				"buffer_size": 2071,
 				"line_ending": "Unix"
 			}
 		},
@@ -503,7 +511,7 @@
 			"file": "app/views/sources/show.html.erb",
 			"settings":
 			{
-				"buffer_size": 1072,
+				"buffer_size": 1117,
 				"line_ending": "Unix"
 			}
 		},
@@ -511,7 +519,7 @@
 			"file": "app/models/cat.rb",
 			"settings":
 			{
-				"buffer_size": 304,
+				"buffer_size": 123,
 				"line_ending": "Unix"
 			}
 		},
@@ -607,10 +615,17 @@
 		"/Users/TiagoDevezas/mount/home/tiagodevezas/Projects/Panorama/app/views/sources",
 		"/Users/TiagoDevezas/mount/home/tiagodevezas/Projects/Panorama/config",
 		"/Users/TiagoDevezas/mount/home/tiagodevezas/Projects/Panorama/db",
-		"/Users/TiagoDevezas/mount/home/tiagodevezas/Projects/Panorama/db/migrate"
+		"/Users/TiagoDevezas/mount/home/tiagodevezas/Projects/Panorama/db/migrate",
+		"/Users/TiagoDevezas/mount/home/tiagodevezas/Projects/Panorama/lib",
+		"/Users/TiagoDevezas/mount/home/tiagodevezas/Projects/Panorama/lib/tasks"
 	],
 	"file_history":
 	[
+		"/Users/TiagoDevezas/mount/home/tiagodevezas/Projects/Panorama/app/helpers/sources_helper.rb",
+		"/Users/TiagoDevezas/mount/home/tiagodevezas/Projects/Panorama/app/assets/stylesheets/c3.css",
+		"/Users/TiagoDevezas/mount/home/tiagodevezas/Projects/Panorama/db/migrate/20141021093130_create_articles.rb",
+		"/Users/TiagoDevezas/mount/home/tiagodevezas/Projects/Panorama/Gemfile",
+		"/Users/TiagoDevezas/mount/home/tiagodevezas/Projects/Panorama/db/migrate/20141204154917_change_url_to_text_in_articles.rb",
 		"/Users/TiagoDevezas/mount/home/tiagodevezas/Projects/Panorama/db/schema.rb",
 		"/Users/TiagoDevezas/mount/home/tiagodevezas/Projects/Panorama/config/database.yml",
 		"/Users/TiagoDevezas/mount/home/tiagodevezas/Projects/Panorama/dump",
@@ -618,14 +633,10 @@
 		"/Users/TiagoDevezas/mount/home/tiagodevezas/Projects/Panorama/app/assets/stylesheets/base/_grid-settings.scss",
 		"/Users/TiagoDevezas/mount/home/tiagodevezas/Projects/Panorama/app/controllers/articles_controller.rb",
 		"/Users/TiagoDevezas/mount/home/tiagodevezas/Projects/Panorama/tmp/cache/assets/development/sass/55b210d373411e6df0efe752019fda00557b3f93/_linear-gradient.scssc",
-		"/Users/TiagoDevezas/mount/home/tiagodevezas/Projects/Panorama/db/migrate/20141204154917_change_url_to_text_in_articles.rb",
-		"/Users/TiagoDevezas/mount/home/tiagodevezas/Projects/Panorama/app/assets/stylesheets/c3.css",
-		"/Users/TiagoDevezas/mount/home/tiagodevezas/Projects/Panorama/app/helpers/sources_helper.rb",
 		"/Users/TiagoDevezas/mount/home/tiagodevezas/Projects/Panorama/app/assets/stylesheets/sources.css.scss",
 		"/Users/TiagoDevezas/mount/home/tiagodevezas/Projects/Panorama/app/views/sources/index.html.erb",
 		"/Users/TiagoDevezas/mount/home/tiagodevezas/Projects/Panorama/app/views/api/totals/index.json.jbuilder",
 		"/Users/TiagoDevezas/mount/home/tiagodevezas/Projects/Panorama/db/migrate/20141028115147_add_type_to_sources.rb",
-		"/Users/TiagoDevezas/mount/home/tiagodevezas/Projects/Panorama/Gemfile",
 		"/Users/TiagoDevezas/mount/home/tiagodevezas/Projects/Panorama/Gemfile.lock",
 		"/Users/TiagoDevezas/mount/home/tiagodevezas/Projects/Panorama/app/models/feed.rb",
 		"/Users/TiagoDevezas/mount/home/tiagodevezas/Projects/Panorama/config/initializers/filter_parameter_logging.rb",
@@ -733,7 +744,6 @@
 		"/Users/TiagoDevezas/mount/home/tiagodevezas/Projects/Panorama/db/migrate/20141024095320_add_facebook_shares_to_articles.rb",
 		"/Users/TiagoDevezas/mount/home/tiagodevezas/Projects/Panorama/db/migrate/._.DS_Store",
 		"/Users/TiagoDevezas/mount/home/tiagodevezas/Projects/Panorama/tmp/cache/assets/development/sass/97521f714dae5092a95b9b07f7c513a0d8d41a15/_span-columns.scssc",
-		"/Users/TiagoDevezas/mount/home/tiagodevezas/Projects/Panorama/db/migrate/20141021093130_create_articles.rb",
 		"/Users/TiagoDevezas/mount/home/tiagodevezas/Projects/Panorama/app/assets/javascripts/sources.js",
 		"/Users/TiagoDevezas/mount/home/tiagodevezas/Projects/Panorama/app/models/concerns/get_twitter_shares.rb",
 		"/Users/TiagoDevezas/mount/home/tiagodevezas/Projects/Panorama/app/assets/javascripts/sources.js.coffee",
@@ -789,7 +799,7 @@
 	"groups":
 	[
 		{
-			"selected": 13,
+			"selected": 2,
 			"sheets":
 			[
 				{
@@ -819,7 +829,7 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 17,
+					"stack_index": 19,
 					"type": "text"
 				},
 				{
@@ -849,7 +859,7 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 7,
+					"stack_index": 16,
 					"type": "text"
 				},
 				{
@@ -875,10 +885,10 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": -0.0,
-						"translation.y": 125.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 12,
+					"stack_index": 0,
 					"type": "text"
 				},
 				{
@@ -887,15 +897,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 1987,
+						"buffer_size": 2066,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								645,
-								645
+								579,
+								579
 							]
 						],
 						"settings":
@@ -904,10 +914,10 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 1.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 14,
+					"stack_index": 2,
 					"type": "text"
 				},
 				{
@@ -936,7 +946,7 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 13,
+					"stack_index": 18,
 					"type": "text"
 				},
 				{
@@ -945,15 +955,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 991,
+						"buffer_size": 1583,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								343,
-								343
+								0,
+								0
 							]
 						],
 						"settings":
@@ -965,7 +975,7 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 20,
+					"stack_index": 21,
 					"type": "text"
 				},
 				{
@@ -974,15 +984,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 7058,
+						"buffer_size": 7366,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								6099,
-								6099
+								737,
+								737
 							]
 						],
 						"settings":
@@ -990,42 +1000,14 @@
 							"syntax": "Packages/Ruby/Ruby.tmLanguage"
 						},
 						"translation.x": 0.0,
-						"translation.y": 2815.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 3,
+					"stack_index": 9,
 					"type": "text"
 				},
 				{
 					"buffer": 7,
-					"file": "Gemfile",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 1473,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								591,
-								591
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Ruby/Ruby.tmLanguage"
-						},
-						"translation.x": -0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 5,
-					"type": "text"
-				},
-				{
-					"buffer": 8,
 					"file": "app/views/api/items/index.json.jbuilder",
 					"semi_transient": false,
 					"settings":
@@ -1050,24 +1032,24 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 19,
+					"stack_index": 20,
 					"type": "text"
 				},
 				{
-					"buffer": 9,
+					"buffer": 8,
 					"file": "app/controllers/sources_controller.rb",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 1115,
+						"buffer_size": 1121,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								359,
-								359
+								0,
+								0
 							]
 						],
 						"settings":
@@ -1075,15 +1057,15 @@
 							"syntax": "Packages/Ruby/Ruby.tmLanguage",
 							"translate_tabs_to_spaces": false
 						},
-						"translation.x": -0.0,
-						"translation.y": 133.0,
+						"translation.x": 0.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 4,
+					"stack_index": 15,
 					"type": "text"
 				},
 				{
-					"buffer": 10,
+					"buffer": 9,
 					"file": "app/views/sources/index.html.erb",
 					"semi_transient": false,
 					"settings":
@@ -1107,52 +1089,24 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 7,
 					"type": "text"
 				},
 				{
-					"buffer": 11,
-					"file": "db/migrate/20141204154917_change_url_to_text_in_articles.rb",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 121,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								121,
-								121
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Ruby/Ruby.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 6,
-					"type": "text"
-				},
-				{
-					"buffer": 12,
+					"buffer": 10,
 					"file": "app/views/partials/_sources_table.html.erb",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 793,
+						"buffer_size": 847,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								228,
-								228
+								0,
+								0
 							]
 						],
 						"settings":
@@ -1164,24 +1118,24 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 10,
+					"stack_index": 6,
 					"type": "text"
 				},
 				{
-					"buffer": 13,
+					"buffer": 11,
 					"file": "app/models/source.rb",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 6570,
+						"buffer_size": 8091,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								6290,
-								6290
+								3777,
+								3777
 							]
 						],
 						"settings":
@@ -1190,14 +1144,42 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 2438.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 4,
 					"type": "text"
 				},
 				{
-					"buffer": 14,
+					"buffer": 12,
+					"file": "app/models/feed.rb",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 132,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								127,
+								127
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Ruby/Ruby.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 13,
+					"type": "text"
+				},
+				{
+					"buffer": 13,
 					"file": "config/database.yml",
 					"semi_transient": false,
 					"settings":
@@ -1223,11 +1205,11 @@
 						"translation.y": 675.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
+					"stack_index": 14,
 					"type": "text"
 				},
 				{
-					"buffer": 15,
+					"buffer": 14,
 					"file": "app/views/partials/_form.html.erb",
 					"semi_transient": false,
 					"settings":
@@ -1252,11 +1234,11 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 11,
+					"stack_index": 17,
 					"type": "text"
 				},
 				{
-					"buffer": 16,
+					"buffer": 15,
 					"file": "app/views/layouts/application.html.erb",
 					"semi_transient": false,
 					"settings":
@@ -1280,11 +1262,11 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 18,
+					"stack_index": 12,
 					"type": "text"
 				},
 				{
-					"buffer": 17,
+					"buffer": 16,
 					"file": "app/controllers/api/sources_controller.rb",
 					"semi_transient": false,
 					"settings":
@@ -1296,8 +1278,8 @@
 						"selection":
 						[
 							[
-								238,
-								238
+								465,
+								465
 							]
 						],
 						"settings":
@@ -1309,24 +1291,24 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 15,
+					"stack_index": 1,
 					"type": "text"
 				},
 				{
-					"buffer": 18,
+					"buffer": 17,
 					"file": "config/routes.rb",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 1855,
+						"buffer_size": 1903,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								225,
-								225
+								0,
+								0
 							]
 						],
 						"settings":
@@ -1339,11 +1321,11 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 16,
+					"stack_index": 11,
 					"type": "text"
 				},
 				{
-					"buffer": 19,
+					"buffer": 18,
 					"file": "config/application.rb",
 					"semi_transient": false,
 					"settings":
@@ -1369,24 +1351,24 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 8,
+					"stack_index": 10,
 					"type": "text"
 				},
 				{
-					"buffer": 20,
+					"buffer": 19,
 					"file": "lib/tasks/panorama.rake",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 394,
+						"buffer_size": 625,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								0,
-								0
+								316,
+								316
 							]
 						],
 						"settings":
@@ -1398,7 +1380,37 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 9,
+					"stack_index": 8,
+					"type": "text"
+				},
+				{
+					"buffer": 20,
+					"file": "lib/feed_crawler.rb",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2071,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								960,
+								960
+							]
+						],
+						"settings":
+						{
+							"open_with_edit": true,
+							"syntax": "Packages/Ruby/Ruby.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": -0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
 					"type": "text"
 				},
 				{
@@ -1427,7 +1439,7 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 22,
+					"stack_index": 23,
 					"type": "text"
 				},
 				{
@@ -1436,15 +1448,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 1072,
+						"buffer_size": 1117,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								488,
-								488
+								330,
+								330
 							]
 						],
 						"settings":
@@ -1456,7 +1468,7 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 25,
+					"stack_index": 5,
 					"type": "text"
 				},
 				{
@@ -1465,15 +1477,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 304,
+						"buffer_size": 123,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								298,
-								101
+								0,
+								0
 							]
 						],
 						"settings":
@@ -1484,7 +1496,7 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 21,
+					"stack_index": 22,
 					"type": "text"
 				},
 				{
@@ -1514,7 +1526,7 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 23,
+					"stack_index": 24,
 					"type": "text"
 				},
 				{
@@ -1542,7 +1554,7 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 24,
+					"stack_index": 25,
 					"type": "text"
 				}
 			]
@@ -1599,8 +1611,40 @@
 		"selected_items":
 		[
 			[
+				"tot",
+				"app/controllers/api/totals_controller.rb"
+			],
+			[
 				"sour",
-				"app/models/source.rb"
+				"app/controllers/api/sources_controller.rb"
+			],
+			[
+				"sourj",
+				"app/views/api/sources/index.json.jbuilder"
+			],
+			[
+				"source",
+				"app/controllers/api/sources_controller.rb"
+			],
+			[
+				"cra",
+				"lib/feed_crawler.rb"
+			],
+			[
+				"craw",
+				"lib/feed_crawler.rb"
+			],
+			[
+				"arti",
+				"app/models/article.rb"
+			],
+			[
+				"fee",
+				"lib/feed_crawler.rb"
+			],
+			[
+				"",
+				"lib/feed_crawler.rb"
 			],
 			[
 				"sch",
@@ -1627,10 +1671,6 @@
 				"app/models/article.rb"
 			],
 			[
-				"arti",
-				"app/models/article.rb"
-			],
-			[
 				"gem",
 				"Gemfile"
 			],
@@ -1647,10 +1687,6 @@
 				"lib/tasks/panorama.rake"
 			],
 			[
-				"",
-				"app/models/source.rb"
-			],
-			[
 				"artic",
 				"app/models/article.rb"
 			],
@@ -1663,10 +1699,6 @@
 				"db/schema.rb"
 			],
 			[
-				"source",
-				"app/controllers/sources_controller.rb"
-			],
-			[
 				"sources",
 				"app/views/partials/_sources_table.html.erb"
 			],
@@ -1677,14 +1709,6 @@
 			[
 				"totalj",
 				"app/views/api/totals/index.json.jbuilder"
-			],
-			[
-				"tot",
-				"app/controllers/api/totals_controller.rb"
-			],
-			[
-				"sourj",
-				"app/views/api/sources/index.json.jbuilder"
 			],
 			[
 				"route",
@@ -2049,10 +2073,6 @@
 			[
 				"json",
 				"app/views/api/sources/index.json.jbuilder"
-			],
-			[
-				"fee",
-				"app/models/feed.rb"
 			],
 			[
 				"shw",

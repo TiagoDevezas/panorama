@@ -4,12 +4,10 @@ module Api
 
 		def index
 			name_params = params[:name]
-
 			type_params = params[:type]
 
-
 			if !name_params && !type_params
-				@sources_list = Source.all.map { |source| { name: source.name, type: source.source_type }}
+				@sources_list = Source.order('source_type DESC').map { |source| { name: source.name, type: source.source_type }}
 				#all_source_data = Source.all_sources_data
 				#@sources_list = all_source_data[0][:sources]
 			end

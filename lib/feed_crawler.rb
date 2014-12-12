@@ -8,20 +8,20 @@ class FeedCrawler
 	Feedjira::Feed.instance_variable_set(:'@feed_classes', classes_without_itunes)
 
 	def crawl
-		first_feed = Feed.order('updated_at ASC').first
-		fetch_and_parse(first_feed)
+		last_updated_feed = Feed.order('last_crawled ASC').first
+		fetch_and_parse(last_updated_feed)
 	end
 
 	def fetch_and_parse(feed)
-		puts "A actualizar feed #{feed.name} da fonte #{feed.source.name}, recolhida pela última vez em #{feed.last_crawled}"
+		Rails.logger.info "A actualizar feed #{feed.name} da fonte #{feed.source.name}, recolhida pela última vez em #{feed.last_crawled}"
 		feed.update(last_crawled: DateTime.now)
 		parsed_feed = Feedjira::Feed.fetch_and_parse feed.url
 		feed_entries = parsed_feed.entries
 		#feed.update(last_modified: last_modified_time)
 		feed_entries.each do |entry|
 			if entry.published
-				# next if entry.published.to_date < Date.today - 3.days || entry.published.to_date > Date.tomorrow
-				next if entry.published.to_date > Date.tomorrow
+				next if entry.published.to_date < Date.new(2014, 10, 01) || entry.published.to_date > Date.tomorrow
+				#next if entry.published.to_date > Date.tomorrow
 			end
 			resolved_url = resolve_url(entry.url)
 			Article.where(url: resolved_url).first_or_create do |article|

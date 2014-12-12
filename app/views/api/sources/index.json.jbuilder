@@ -17,6 +17,7 @@ elsif @sources
 		json.name source.name
 		json.url source.url
 		json.type source.source_type
+		json.last_crawled source.feeds.order('last_crawled DESC').first.last_crawled
 		json.total_feeds source.feeds.count
 		json.total_items article_count
 		json.total_shares total_shares 
@@ -27,10 +28,10 @@ elsif @sources
 		json.avg_shares avg_shares
 		json.avg_day source.articles.average_articles_by('day')
 		json.avg_month source.articles.average_articles_by('month')
-		json.categories source.articles.category_list.each do |category|
-			json.name category[0].strip
-			json.count category[1]
-		end
+		# json.categories source.articles.category_list.each do |category|
+			# json.name category[0].strip
+			# json.count category[1]
+		# end
 	end
 else
 	source = Source.all_sources_data
@@ -50,9 +51,9 @@ else
 			#json.name s.name
 			#json.type s.source_type
 		#end
-		json.categories source[:categories].each do |category|
-			json.name category[0]
-			json.count category[1]
-		end
+		# json.categories source[:categories].each do |category|
+			# json.name category[0]
+			# json.count category[1]
+		# end
 	end
 end

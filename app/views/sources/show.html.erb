@@ -10,7 +10,7 @@
 
 <% @source.feeds.each do |feed| %>
 	<h4><%= feed.name %></h4> 
-	<p><%= link_to feed.url, feed.url %> | <%= feed.articles.count %> artigos</p>
+	<p><%= link_to feed.url, feed.url %> | <%= feed.articles.count %> artigos | Última recolha em <%= feed.last_crawled %></p>
 	<table class="full-width">
 		<tbody>
 			<tr>
