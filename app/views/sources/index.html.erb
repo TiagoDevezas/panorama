@@ -1,14 +1,14 @@
-<h1>Sources</h1>
+<h1>Fontes</h1>
 
 <%= render 'partials/flash' %>
 
 <p><%= link_to 'New source', new_source_path %></p>
 
-<h3>Newspapers</h3>
-<%= render partial: 'partials/sources_table', locals: {sources: @newspapers} %>
+<h3>Nacionais</h3>
+<%= render partial: 'partials/sources_table', locals: {sources: @national} %>
 
-<h3>International</h3>
+<h3>Internationais</h3>
 <%= render partial: 'partials/sources_table', locals: {sources: @international} %>
 
-<h3>Blogs</h3>
+<h3>Blogues</h3>
 <%= render partial: 'partials/sources_table', locals: {sources: @blogs} %>

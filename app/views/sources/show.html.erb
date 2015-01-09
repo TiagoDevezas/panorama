@@ -11,8 +11,8 @@
 <% @source.feeds.each do |feed| %>
 	<h4><%= feed.name %></h4> 
 	<p><%= link_to feed.url, feed.url %> | <%= feed.articles.count %> artigos | Última recolha em <%= feed.last_crawled %></p>
-	<table class="full-width">
-		<tbody>
+	<table class="full-width tablesorter">
+		<thead>
 			<tr>
 				<th>Título</th>
 				<th>Publicada</th>
@@ -21,7 +21,9 @@
 				<th>Facebook</th>
 				<th>Tópicos</th>
 				<th>Acções</th>
-			</tr>
+			</tr>			
+		</thead>
+		<tbody>
 			<% feed.articles.each do |article| %>
 				<tr>
 					<td>
@@ -30,8 +32,8 @@
 	        </td>
 					<td><%= article.pub_date %></td>
 					<td><%= article.created_at.in_time_zone('Lisbon') %></td>
-					<td><%= article.twitter_shares %></td>
-					<td><%= article.facebook_shares %></td>
+					<td><%= article.twitter_shares.to_i %></td>
+					<td><%= article.facebook_shares.to_i %></td>
 					<td><%= article.cats.map(&:name).join(', ') %></td>
 					<td><%= link_to 'Apagar', article_path(article),
                     method: :delete, data: { confirm: 'Are you sure?' } %>

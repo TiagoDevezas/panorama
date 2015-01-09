@@ -1,5 +1,5 @@
 class Article < ActiveRecord::Base
-	after_commit :get_social_shares
+	# after_commit :get_social_shares
   belongs_to :feed
   has_and_belongs_to_many :cats
 
@@ -20,7 +20,7 @@ class Article < ActiveRecord::Base
 
   def self.find_duplicates
   	dups_ids = []
-  	grouped_by_title = all.order('created_at DESC').group_by { |article| [article.url, article.feed.source_id] }
+  	grouped_by_title = all.order('created_at DESC').group_by { |article| [article.url.strip] }
   	grouped_by_title.values.each do |group|
 			first_record = group.shift
 			group.each { |double| dups_ids << double.id }
@@ -97,7 +97,7 @@ class Article < ActiveRecord::Base
 
 	def self.average_articles_by(time_period)
 		articles = self.all
-		article_count = articles.count
+		article_count = articles.size
 		first_date = articles.first.pub_date ? articles.first.pub_date : articles.first.updated_at
 		last_date = articles.last.pub_date ? articles.last.pub_date : articles.last.updated_at
 		if time_period == 'day'
@@ -121,8 +121,8 @@ class Article < ActiveRecord::Base
 					#day.to_datetime, day.to_datetime + 1)
 				#articles += articles_no_pub_date
 				count = articles.size
-				twitter_shares = articles.map(&:twitter_shares).sum
-				facebook_shares = articles.map(&:facebook_shares).sum
+				twitter_shares = articles.map(&:twitter_shares).compact.sum
+				facebook_shares = articles.map(&:facebook_shares).compact.sum
 				total_shares = twitter_shares + facebook_shares
 				time_and_totals << Hash[ 
 					time: day, 
@@ -140,8 +140,8 @@ class Article < ActiveRecord::Base
 				#articles_no_pub_date = self.where(pub_date: nil).where("extract(month from created_at) = ?", month)
 				#articles += articles_no_pub_date
 				count = articles.size
-				twitter_shares = articles.map(&:twitter_shares).sum
-				facebook_shares = articles.map(&:facebook_shares).sum
+				twitter_shares = articles.map(&:twitter_shares).compact.sum
+				facebook_shares = articles.map(&:facebook_shares).compact.sum
 				total_shares = twitter_shares + facebook_shares
 				time_and_totals << Hash[ 
 					time: month, 
@@ -159,8 +159,8 @@ class Article < ActiveRecord::Base
 				#articles_no_pub_date = self.where(pub_date: nil).where("extract(hour from created_at) = ?", hour)
 				#articles += articles_no_pub_date
 				count = articles.size
-				twitter_shares = articles.map(&:twitter_shares).sum
-				facebook_shares = articles.map(&:facebook_shares).sum
+				twitter_shares = articles.map(&:twitter_shares).compact.sum
+				facebook_shares = articles.map(&:facebook_shares).compact.sum
 				total_shares = twitter_shares + facebook_shares
 				time_and_totals << Hash[ 
 					time: hour, 
@@ -175,8 +175,8 @@ class Article < ActiveRecord::Base
 			(1..7).to_a.each do |weekday|
 				articles = self.where("extract(ISODOW from pub_date) = ?", weekday)
 				count = articles.size
-				twitter_shares = articles.map(&:twitter_shares).sum
-				facebook_shares = articles.map(&:facebook_shares).sum
+				twitter_shares = articles.map(&:twitter_shares).compact.sum
+				facebook_shares = articles.map(&:facebook_shares).compact.sum
 				total_shares = twitter_shares + facebook_shares
 				time_and_totals << Hash[ 
 					time: weekday, 
@@ -190,25 +190,25 @@ class Article < ActiveRecord::Base
 		time_and_totals
 	end
 
-	def get_social_shares
-  	twitter_url = "https://cdn.api.twitter.com/1/urls/count.json?url="
-  	facebook_url = "https://api.facebook.com/method/links.getStats?format=json&urls="
-  	article_url = ERB::Util.url_encode(self.url)
-  	#article_url = self.url
-  	twitter_response = open(twitter_url + article_url).read
-  	twitter_shares = JSON.parse(twitter_response)['count']
-  	facebook_response = open(facebook_url + article_url).read
-  	facebook_shares = JSON.parse(facebook_response)[0]['share_count']
-  	shares = Hash['twitter' => twitter_shares, 'facebook' => facebook_shares]
-  	#self.update(twitter_shares: shares['twitter'], facebook_shares: shares['facebook'])
-  	if self.twitter_shares != shares['twitter']
-  		self.update(twitter_shares: shares['twitter'])
-  		#puts "Twitter shares changed"
-  	end
-  	if self.facebook_shares != shares['facebook']
-  		self.update(facebook_shares: shares['facebook'])
-  		#puts "Facebook shares changed"
-		end
-	end
+	# def get_social_shares
+ #  	twitter_url = "https://cdn.api.twitter.com/1/urls/count.json?url="
+ #  	facebook_url = "https://api.facebook.com/method/links.getStats?format=json&urls="
+ #  	article_url = ERB::Util.url_encode(self.url)
+ #  	#article_url = self.url
+ #  	twitter_response = open(twitter_url + article_url).read
+ #  	twitter_shares = JSON.parse(twitter_response)['count']
+ #  	facebook_response = open(facebook_url + article_url).read
+ #  	facebook_shares = JSON.parse(facebook_response)[0]['share_count']
+ #  	shares = Hash['twitter' => twitter_shares, 'facebook' => facebook_shares]
+ #  	#self.update(twitter_shares: shares['twitter'], facebook_shares: shares['facebook'])
+ #  	if self.twitter_shares != shares['twitter']
+ #  		self.update(twitter_shares: shares['twitter'])
+ #  		#puts "Twitter shares changed"
+ #  	end
+ #  	if self.facebook_shares != shares['facebook']
+ #  		self.update(facebook_shares: shares['facebook'])
+ #  		#puts "Facebook shares changed"
+	# 	end
+	# end
 
 end

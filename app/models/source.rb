@@ -6,6 +6,7 @@ class Source < ActiveRecord::Base
 	has_many :articles, through: :feeds
 	accepts_nested_attributes_for :feeds, allow_destroy: true
 	validates :name, :url, presence: true, uniqueness: true
+	validates :acronym, uniqueness: true
 	validates :source_type, presence: true 
 
 	# def get_unique_days

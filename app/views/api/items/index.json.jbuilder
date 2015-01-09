@@ -1,6 +1,6 @@
 json.array! @articles do |article|
-	twitter_shares = article.twitter_shares
-	facebook_shares = article.facebook_shares
+	twitter_shares = article.twitter_shares.to_i
+	facebook_shares = article.facebook_shares.to_i
 	total_shares = twitter_shares + facebook_shares
 
 	json.id article.id

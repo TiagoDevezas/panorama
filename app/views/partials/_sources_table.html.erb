@@ -1,5 +1,5 @@
-<table class="full-width">
-	<tbody>
+<table class="tablesorter full-width">
+	<thead>
 		<tr>
 			<th>Nome</th>
 			<th>Feeds</th>
@@ -9,6 +9,8 @@
 			<th>Última publicação</th>
 			<th>Acções</th>
 		</tr>
+	</thead>
+	<tbody>
 		<% sources.each do |source| %>
 			<tr>
 				<td>
@@ -16,8 +18,8 @@
         </td>
 				<td><%= source.feeds.count %></td>
 				<td><%= source.articles.count %></td>
-				<td><%= source.articles.map(&:twitter_shares).sum %></td>
-				<td><%= source.articles.map(&:facebook_shares).sum %></td>
+				<td><%= source.articles.map(&:twitter_shares).compact.sum %></td>
+				<td><%= source.articles.map(&:facebook_shares).compact.sum %></td>
 				<td><%= !source.articles.blank? ? source.articles.order('pub_date DESC').first.pub_date : '' %></td>
 				<td><%= link_to 'Editar', edit_source_path(source) %> | <%= link_to 'Apagar', source_path(source),
                     method: :delete, data: { confirm: 'Are you sure?' } %>

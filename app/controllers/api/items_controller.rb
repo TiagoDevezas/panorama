@@ -1,6 +1,7 @@
 module Api
 	class ItemsController < ApplicationController
 		include CheckApiTimeConstraints
+		include CacheConfig
 		respond_to :json
 
 		def index
@@ -25,7 +26,8 @@ module Api
 			end
 			
 			if source
-				@articles = Source.find_by(name: source).articles.limit(limit).offset(offset).where('pub_date IS NOT NULL')
+				source = Source.where(name: source).empty? ? Source.where(acronym: source) : Source.where(name: source)
+				@articles = source.first.articles.limit(limit).offset(offset).where('pub_date IS NOT NULL')
 			end
 
 			if type

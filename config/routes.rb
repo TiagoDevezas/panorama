@@ -5,6 +5,7 @@ Rails.application.routes.draw do
     resources :items
     resources :feeds
     resources :totals
+    resources :stats
   end
 
   resources :sources

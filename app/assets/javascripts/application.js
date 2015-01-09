@@ -13,4 +13,10 @@
 //= require jquery
 //= require jquery_ujs
 //= require jquery_nested_form
+//= require jquery-tablesorter
 //= require_tree .
+
+$(document).ready(function() {
+	$("table.tablesorter").tablesorter();
+});
+

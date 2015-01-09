@@ -8,8 +8,13 @@ class FeedCrawler
 	Feedjira::Feed.instance_variable_set(:'@feed_classes', classes_without_itunes)
 
 	def crawl
-		last_updated_feed = Feed.order('last_crawled ASC').first
+		last_updated_feed = Feed.order('last_crawled ASC NULLS FIRST').first
 		fetch_and_parse(last_updated_feed)
+	end
+
+	def crawl_source(source_name)
+		source = Source.where(name: source_name).first
+		source.feeds.each { |feed| fetch_and_parse(feed) }
 	end
 
 	def fetch_and_parse(feed)
@@ -20,7 +25,7 @@ class FeedCrawler
 		#feed.update(last_modified: last_modified_time)
 		feed_entries.each do |entry|
 			if entry.published
-				next if entry.published.to_date < Date.new(2014, 10, 01) || entry.published.to_date > Date.tomorrow
+				next if entry.published.to_date <= Date.new(2014, 12, 05) || entry.published.to_date > Date.tomorrow
 				#next if entry.published.to_date > Date.tomorrow
 			end
 			resolved_url = resolve_url(entry.url)
@@ -42,6 +47,7 @@ class FeedCrawler
 	end
 
 	def resolve_url(entry_url)
+		entry_url = entry_url.strip
 		url = Addressable::URI.parse(entry_url)
 		http_client = HTTPClient.new
 		max_redirects = 2

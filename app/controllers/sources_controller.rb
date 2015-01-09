@@ -1,8 +1,8 @@
 class SourcesController < ApplicationController
 
 	def index
-		@newspapers = Source.where(source_type: 'newspaper') #.joins(:articles).includes(:articles).order('pub_date desc')
-		@blogs = Source.where(source_type: 'blog') #.joins(:articles).includes(:articles).order('pub_date desc')
+		@national = Source.where(source_type: 'national') #.joins(:articles).includes(:articles).order('pub_date desc')
+		@blogs = Source.where(source_type: 'blogs') #.joins(:articles).includes(:articles).order('pub_date desc')
 		@international = Source.where(source_type: 'international') #.joins(:articles).includes(:articles).order('pub_date desc')
 	end
 
@@ -34,7 +34,7 @@ class SourcesController < ApplicationController
 		@source = Source.find(params[:id])
 
 		if @source.update(source_params)
-			redirect_to @source
+			redirect_to sources_path
 		else
 			render 'edit'
 		end
@@ -49,7 +49,7 @@ class SourcesController < ApplicationController
 
 	private
 		def source_params
-			params.require(:source).permit(:name, :url, :source_type, feeds_attributes: [:id, :name, :url, :source_id, :_destroy])
+			params.require(:source).permit(:name, :acronym, :url, :source_type, feeds_attributes: [:id, :name, :url, :source_id, :_destroy])
 		end
 
 end
