@@ -14,6 +14,11 @@ gem 'coffee-rails', '~> 4.0.0'
 # See https://github.com/sstephenson/execjs#readme for more supported runtimes
 # gem 'therubyracer',  platforms: :ruby
 
+# Memcached Dalli Store
+gem 'dalli'
+
+gem 'groupdate'
+
 # Faster JBuilder rendering
 gem 'yajl-ruby', require: 'yajl'
 
@@ -45,6 +50,7 @@ gem 'sdoc', '~> 0.4.0',          group: :doc
 # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
 gem 'spring',        group: :development
 gem 'thin',					 group: :development
+gem 'meta_request',  group: :development
 
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'

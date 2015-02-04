@@ -14,10 +14,22 @@ namespace :panorama do
 			#File.delete pid_file
 		#end
 	end
-	desc "Vai buscar o número de partilhas do artigo no Twitter e Facebook"
-	task get_shares: :environment do
-		puts "A actualizar partilhas nas redes sociais..."
+	desc "Vai buscar o número de partilhas do artigo no Twitter"
+	task get_twitter_shares: :environment do
+		puts "A actualizar partilhas no Twitter..."
 		share_crawler = ShareCrawler.new
-		share_crawler.get_social_shares
+		share_crawler.get_social_shares('twitter')
+	end
+	desc "Vai buscar o número de partilhas do artigo no Facebook"
+	task get_facebook_shares: :environment do
+		puts "A actualizar partilhas no Facebook..."
+		share_crawler = ShareCrawler.new
+		share_crawler.get_social_shares('facebook')
+	end
+	desc "Vai buscar o número de partilhas do artigo no Twitter e no Facebook"
+	task get_all_shares: :environment do
+		puts "A actualizar partilhas no Facebook..."
+		share_crawler = ShareCrawler.new
+		share_crawler.get_social_shares('all')
 	end
 end

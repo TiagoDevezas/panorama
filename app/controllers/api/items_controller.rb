@@ -10,6 +10,7 @@ module Api
 			source = params[:source]
 			offset = params[:offset]
 			query = params[:q]
+			fields = params[:fields]
 			category = params[:category]
 			type = params[:type]
 
@@ -35,7 +36,13 @@ module Api
 			end
 
 			if query
-				@articles = @articles.find_articles_with(query).limit(limit)
+				if !fields
+					@articles = @articles.find_articles_with(query).limit(limit)
+				elsif fields == 'title'
+					@articles = @articles.find_in_title(query).limit(limit)
+				elsif fields  == 'summary'
+					@articles = @articles.find_in_summary(query).limit(limit)
+				end
 			end
 			if category
 				@articles = @articles.with_category(category).limit(limit)
@@ -60,6 +67,8 @@ module Api
 			# end
 
 			check_time_constraints
+
+			# fetch_or_create_cache(params.except(:callback), 10.minutes, @articles)
 
 		end
 

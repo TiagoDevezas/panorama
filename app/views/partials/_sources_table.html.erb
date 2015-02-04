@@ -7,6 +7,7 @@
 			<th>Twitter</th>
 			<th>Facebook</th>
 			<th>Última publicação</th>
+			<th>Estado</th>
 			<th>Acções</th>
 		</tr>
 	</thead>
@@ -21,6 +22,9 @@
 				<td><%= source.articles.map(&:twitter_shares).compact.sum %></td>
 				<td><%= source.articles.map(&:facebook_shares).compact.sum %></td>
 				<td><%= !source.articles.blank? ? source.articles.order('pub_date DESC').first.pub_date : '' %></td>
+				<td>
+					<span class="circle <%= source.articles.order('pub_date DESC').first.pub_date < 2.days.ago ? "-alert" : "-ok" %>"></span>
+				</td>
 				<td><%= link_to 'Editar', edit_source_path(source) %> | <%= link_to 'Apagar', source_path(source),
                     method: :delete, data: { confirm: 'Are you sure?' } %>
         </td>

@@ -32,7 +32,7 @@ class FeedCrawler
 			Article.where(url: resolved_url).first_or_create do |article|
 				article.title = entry.title
 				article.url = resolved_url
-				article.pub_date = entry.published
+				article.pub_date = entry.published != nil ? entry.published : DateTime.now
 				article.summary = entry.summary
 				article.feed_id = feed.id
 
@@ -50,21 +50,28 @@ class FeedCrawler
 		entry_url = entry_url.strip
 		url = Addressable::URI.parse(entry_url)
 		http_client = HTTPClient.new
-		max_redirects = 2
+		# max_redirects = 2
 		begin
-			resp = http_client.get(url)
-			resolved_url = resp.header['Location']
-			if resolved_url.length > 0
-				while max_redirects != 0
-					new_location = http_client.get(resolved_url[0]).header['Location']
-					break if new_location.length == 0
-					resolved_url = new_location
-					max_redirects -= 1
-				end
-				resolved_url[0]
+			resp = http_client.get(url, follow_redirect: true)
+			resolved_url = resp.header.request_uri.to_s
+			if resolved_url
+				resolved_url
 			else
 				entry_url
 			end
+			# resp = http_client.get(url)
+			# resolved_url = resp.header['Location']
+			# if resolved_url.length > 0
+			# 	while max_redirects != 0
+			# 		new_location = http_client.get(resolved_url[0]).header['Location']
+			# 		break if new_location.length == 0
+			# 		resolved_url = new_location
+			# 		max_redirects -= 1
+			# 	end
+			# 	resolved_url[0]
+			# else
+			# 	entry_url
+			# end
 		rescue => e
 			puts "Can't resolve URL, Error #{e}"
 			entry_url

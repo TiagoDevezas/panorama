@@ -34,7 +34,7 @@
 					<td><%= article.created_at.in_time_zone('Lisbon') %></td>
 					<td><%= article.twitter_shares.to_i %></td>
 					<td><%= article.facebook_shares.to_i %></td>
-					<td><%# article.cats.map(&:name).join(', ') %></td>
+					<td><%= article.cats.map(&:name).join(', ') %></td>
 					<td><%= link_to 'Apagar', article_path(article),
                     method: :delete, data: { confirm: 'Are you sure?' } %>
           </td>

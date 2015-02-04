@@ -11,9 +11,11 @@ module Api
 			sources_count = Source.all.size
 			feeds_count = Feed.all.size
 			articles_count = Article.all.size
-			all_articles = Article.all
-			twitter_shares = all_articles.map(&:twitter_shares).compact.sum
-			facebook_shares = all_articles.map(&:facebook_shares).compact.sum
+			#all_articles = Article.all
+			twitter_shares = Article.reorder('').select("SUM(twitter_shares) as twitter_shares").first.twitter_shares || 0
+			#twitter_shares = all_articles.map(&:twitter_shares).compact.sum
+			facebook_shares = Article.reorder('').select("SUM(facebook_shares) as facebook_shares").first.facebook_shares || 0
+			#facebook_shares = all_articles.map(&:facebook_shares).compact.sum
 			all_shares = twitter_shares + facebook_shares
 
 			@stats = []

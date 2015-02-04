@@ -33,6 +33,19 @@
   @extend %flash-error
 }
 
+span.circle {
+  display: block;
+  border-radius: 50%;
+  height: 15px;
+  width: 15px;
+  &.-ok {
+    background-color: green;
+  }
+  &.-alert {
+    background-color: orange;
+  }
+}
+
 .text-stats {
   @include span-columns(12);
   @include media($large-screen-up) {

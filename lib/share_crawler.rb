@@ -1,29 +1,48 @@
+require 'httpclient'
 class ShareCrawler
 
-	def get_social_shares
-		article = Article.where('pub_date < ?', 1.week.ago)
-																				 .where(twitter_shares: nil)
-																				 .where(facebook_shares: nil).last
-		if article
-	  	twitter_url = "https://cdn.api.twitter.com/1/urls/count.json?url="
-	  	facebook_url = "https://api.facebook.com/method/links.getStats?format=json&urls="
-	  	article_url = ERB::Util.url_encode(article.url)
-	  	twitter_response = open(twitter_url + article_url).read
-	  	twitter_shares = JSON.parse(twitter_response)['count']
-	  	facebook_response = open(facebook_url + article_url).read
-	  	facebook_shares = JSON.parse(facebook_response)[0]['share_count']
-	  	shares = Hash['twitter' => twitter_shares, 'facebook' => facebook_shares]
-	  	article.update(twitter_shares: shares['twitter'], facebook_shares: shares['facebook'])
-	  # 	if article.twitter_shares != shares['twitter']
-	  # 		article.update(twitter_shares: shares['twitter'])
-	  # 		#puts "Twitter shares changed"
-	  # 	end
-	  # 	if article.facebook_shares != shares['facebook']
-	  # 		article.update(facebook_shares: shares['facebook'])
-	  # 		#puts "Facebook shares changed"
-			# end
-		else
-			puts "Error"
+	def get_social_shares(network)
+		if network == 'twitter'
+			get_twitter_shares
+		elsif network == 'facebook'
+			get_facebook_shares
+		elsif network == 'all'
+			get_twitter_shares
+			get_facebook_shares
 		end
 	end
+
+	def get_twitter_shares
+		article = Article.where('pub_date < ?', 1.week.ago)
+										 .where(twitter_shares: nil).last
+		if article
+			http_client = HTTPClient.new
+			twitter_url = "https://cdn.api.twitter.com/1/urls/count.json?url="
+	  	article_url = ERB::Util.url_encode(article.url.strip)
+	  	twitter_response = http_client.get(twitter_url + article_url)
+	  	twitter_shares = JSON.parse(twitter_response.body)['count']
+	  	shares = Hash['twitter' => twitter_shares]
+	  	article.update(twitter_shares: shares['twitter'])
+		else
+			"Error getting Twitter shares"
+		end
+	end
+
+	def get_facebook_shares
+		article = Article.where('pub_date < ?', 1.week.ago)
+										 .where(facebook_shares: nil).last
+		if article
+			http_client = HTTPClient.new
+			facebook_url = "https://api.facebook.com/method/links.getStats?format=json&urls="
+	  	article_url = ERB::Util.url_encode(article.url)
+	  	url = "#{facebook_url}\"#{article_url}\""
+	  	facebook_response = http_client.get(url)
+	  	facebook_shares = JSON.parse(facebook_response.body)[0]['share_count']
+	  	shares = Hash['facebook' => facebook_shares]
+	  	article.update(facebook_shares: shares['facebook'])
+		else
+			"Error getting Facebook shares"
+		end
+	end
+
 end

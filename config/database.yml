@@ -82,5 +82,6 @@ test:
 production:
   <<: *default
   database: Panorama_production
-  username: Panorama
+  template: Panorama_development
+  # username: Panorama
   password: <%= ENV['PANORAMA_DATABASE_PASSWORD'] %>
