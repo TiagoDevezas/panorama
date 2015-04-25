@@ -1,15 +1,35 @@
+days_and_totals_for_type = @days_and_totals_for_type
+days_and_totals_for_source = @days_and_totals_for_source
+
 if @days_and_totals
 
 	json.array! @days_and_totals do |el|
 		json.time el[:time]
 		json.articles el[:count]
 		if @source_article_count
+			if days_and_totals_for_source
+				json.total_articles_for_day days_and_totals_for_source.select { |obj| obj[:time] == el[:time]}[0][:count]
+			end
 			json.total_source_articles @source_article_count
 			json.percent_of_source ((el[:count] / @source_article_count.to_f) * 100).round(2)
 		end
 		if @type_article_count
-			json.total_type_articles @type_article_count
-			json.percent_of_type ((el[:count] / @type_article_count.to_f) * 100).round(2)
+			if days_and_totals_for_type
+				type_article_count = days_and_totals_for_type.map { |h| h[:count] }.sum
+				articles_for_day = days_and_totals_for_type.select { |obj| obj[:time] == el[:time]}[0][:count]
+				json.total_articles_for_day articles_for_day
+				json.total_type_articles type_article_count
+				json.percent_of_type_by_day ((el[:count] / articles_for_day.to_f) * 100 ).round(2)
+			end
+			if !days_and_totals_for_type
+				type_article_count = @type_article_count
+			end
+			#type_article_count = days_and_totals_for_type.map { |h| h[:count] }.sum
+			#articles_for_day = days_and_totals_for_type.select { |obj| obj[:time] == el[:time]}[0][:count]
+			#json.total_articles_for_day articles_for_day
+			#json.total_type_articles @type_article_count
+			json.total_type_articles type_article_count
+			json.percent_of_type ((el[:count] / type_article_count.to_f) * 100).round(2)
 		end
 		if @query_article_count
 			json.total_query_articles @query_article_count
@@ -19,6 +39,9 @@ if @days_and_totals
 			articles_with_source_type_length = @source_type_totals.select { |h| h[:time].to_s == el[:time] }.first[:count]
 			json.total_articles_of_type_by_day articles_with_source_type_length
 			json.percent_of_type_by_day ((el[:count] / articles_with_source_type_length.to_f) * 100 ).round(2)
+		end
+		if @time_period_count
+			json.total_period_articles @time_period_count
 		end
 		json.twitter_shares el[:twitter_shares]
 		json.facebook_shares el[:facebook_shares]

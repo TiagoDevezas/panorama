@@ -18,7 +18,7 @@ class FeedCrawler
 	end
 
 	def fetch_and_parse(feed)
-		Rails.logger.info "A actualizar feed #{feed.name} da fonte #{feed.source.name}, recolhida pela última vez em #{feed.last_crawled}"
+		Rails.logger.debug "A actualizar feed #{feed.name} da fonte #{feed.source.name}, recolhida pela última vez em #{feed.last_crawled}"
 		feed.update(last_crawled: DateTime.now)
 		parsed_feed = Feedjira::Feed.fetch_and_parse feed.url
 		feed_entries = parsed_feed.entries
@@ -29,11 +29,16 @@ class FeedCrawler
 				#next if entry.published.to_date > Date.tomorrow
 			end
 			resolved_url = resolve_url(entry.url)
-			Article.where(url: resolved_url).first_or_create do |article|
+			# Rails.logger.debug "Artigo com o url #{resolved_url} da fonte #{feed.source.name} já existe" if Article.where(url: resolved_url).exists?
+			if Article.exists?(url: resolved_url)
+				Rails.logger.debug "Artigo com o url #{resolved_url} da fonte #{feed.source.name} já existe"
+				next
+			end
+			Article.create do |article|
 				article.title = entry.title
-				article.url = resolved_url
+				article.url = resolved_url.strip
 				article.pub_date = entry.published != nil ? entry.published : DateTime.now
-				article.summary = entry.summary
+				article.summary = entry.summary || entry.content || ''
 				article.feed_id = feed.id
 
 				if entry.categories.length > 0
@@ -50,7 +55,12 @@ class FeedCrawler
 		entry_url = entry_url.strip
 		url = Addressable::URI.parse(entry_url)
 		http_client = HTTPClient.new
-		# max_redirects = 2
+		# Remove Google tracking parameters
+		query_params = url.query_values
+		if query_params
+			clean_query_params = query_params.reject { |k, v| k.start_with?('utm_')}
+			url.query_values = clean_query_params
+		end
 		begin
 			resp = http_client.get(url, follow_redirect: true)
 			resolved_url = resp.header.request_uri.to_s
@@ -59,19 +69,6 @@ class FeedCrawler
 			else
 				entry_url
 			end
-			# resp = http_client.get(url)
-			# resolved_url = resp.header['Location']
-			# if resolved_url.length > 0
-			# 	while max_redirects != 0
-			# 		new_location = http_client.get(resolved_url[0]).header['Location']
-			# 		break if new_location.length == 0
-			# 		resolved_url = new_location
-			# 		max_redirects -= 1
-			# 	end
-			# 	resolved_url[0]
-			# else
-			# 	entry_url
-			# end
 		rescue => e
 			puts "Can't resolve URL, Error #{e}"
 			entry_url

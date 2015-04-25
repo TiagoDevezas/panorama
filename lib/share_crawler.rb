@@ -13,6 +13,7 @@ class ShareCrawler
 	end
 
 	def get_twitter_shares
+		Rails.logger.debug "A actualizar partilhas no Twitter..."
 		article = Article.where('pub_date < ?', 1.week.ago)
 										 .where(twitter_shares: nil).last
 		if article
@@ -24,11 +25,12 @@ class ShareCrawler
 	  	shares = Hash['twitter' => twitter_shares]
 	  	article.update(twitter_shares: shares['twitter'])
 		else
-			"Error getting Twitter shares"
+			Rails.logger.error "[ERROR] getting Twitter shares"
 		end
 	end
 
 	def get_facebook_shares
+		Rails.logger.debug "A actualizar partilhas no Facebook..."
 		article = Article.where('pub_date < ?', 1.week.ago)
 										 .where(facebook_shares: nil).last
 		if article
@@ -41,7 +43,7 @@ class ShareCrawler
 	  	shares = Hash['facebook' => facebook_shares]
 	  	article.update(facebook_shares: shares['facebook'])
 		else
-			"Error getting Facebook shares"
+			Rails.logger.error "[ERROR] getting Facebook shares"
 		end
 	end
 

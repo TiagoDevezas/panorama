@@ -1,9 +1,10 @@
 class SourcesController < ApplicationController
 
 	def index
-		@national = Source.where(source_type: 'national') #.joins(:articles).includes(:articles).order('pub_date desc')
-		@blogs = Source.where(source_type: 'blogs') #.joins(:articles).includes(:articles).order('pub_date desc')
-		@international = Source.where(source_type: 'international') #.joins(:articles).includes(:articles).order('pub_date desc')
+		@sources = Source.all
+		#@national = Source.where(source_type: 'national') #.joins(:articles).includes(:articles).order('pub_date desc')
+		#@blogs = Source.where(source_type: 'blogs') #.joins(:articles).includes(:articles).order('pub_date desc')
+		#@international = Source.where(source_type: 'international') #.joins(:articles).includes(:articles).order('pub_date desc')
 	end
 
 	def new
@@ -23,7 +24,7 @@ class SourcesController < ApplicationController
 	end
 
 	def show
-		@source = Source.find(params[:id])
+		@source = Source.includes(:feeds => :articles).find(params[:id])
 	end
 
 	def edit

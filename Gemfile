@@ -14,10 +14,20 @@ gem 'coffee-rails', '~> 4.0.0'
 # See https://github.com/sstephenson/execjs#readme for more supported runtimes
 # gem 'therubyracer',  platforms: :ruby
 
+gem 'rufus-scheduler'
+
+gem 'countries'
+
+# gem 'textacular', '~> 3.0'
+
+# Find N+1 Queries
+#gem 'bullet', :group => 'development'
+gem 'rack-mini-profiler', :group => 'development'
+
 # Memcached Dalli Store
 gem 'dalli'
 
-gem 'groupdate'
+#gem 'groupdate'
 
 # Faster JBuilder rendering
 gem 'yajl-ruby', require: 'yajl'
@@ -39,6 +49,9 @@ gem 'httpclient'
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
 
+# HTML/XML parser
+gem 'nokogiri'
+
 gem 'jquery-tablesorter'
 # Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
 gem 'turbolinks'
@@ -48,15 +61,15 @@ gem 'jbuilder', '~> 2.0'
 gem 'sdoc', '~> 0.4.0',          group: :doc
 
 # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
-gem 'spring',        group: :development
-gem 'thin',					 group: :development
+# gem 'spring',        group: :development
+# gem 'thin',					 group: :development
 gem 'meta_request',  group: :development
 
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 
-# Use unicorn as the app server
-# gem 'unicorn'
+# Use puma as the app server
+gem 'puma'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development

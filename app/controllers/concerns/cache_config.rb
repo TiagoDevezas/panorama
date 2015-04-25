@@ -10,7 +10,7 @@ module CacheConfig
 	# end
 
 	def self.included(base)
-    base.caches_action :index, cache_path: Proc.new {|c| c.params.except(:callback) }, expires_in: 15.minutes
+    base.caches_action :index, cache_path: Proc.new {|c| c.params.except(:callback) }, expires_in: 1.hour
   end
 
 end

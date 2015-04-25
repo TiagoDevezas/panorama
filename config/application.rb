@@ -12,6 +12,10 @@ Bundler.require(*Rails.groups)
 
 module Panorama
   class Application < Rails::Application
+    # For postgres full text search indexes
+    config.active_record.schema_format = :sql
+
+    config.relative_url_root = "/panorama"
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.

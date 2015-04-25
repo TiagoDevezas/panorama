@@ -12,18 +12,18 @@
 		</tr>
 	</thead>
 	<tbody>
-		<% sources.each do |source| %>
+		<% sources.includes(:feeds).each do |source| %>
 			<tr>
 				<td>
           <%= link_to source.name, source %>
         </td>
-				<td><%= source.feeds.count %></td>
-				<td><%= source.articles.count %></td>
-				<td><%= source.articles.map(&:twitter_shares).compact.sum %></td>
-				<td><%= source.articles.map(&:facebook_shares).compact.sum %></td>
-				<td><%= !source.articles.blank? ? source.articles.order('pub_date DESC').first.pub_date : '' %></td>
+				<td><%= source.feeds.size %></td>
+				<td><%= Article.with_source(source.name).size %></td>
+				<td><%= Article.with_source(source.name).pluck(:twitter_shares).compact.sum %></td>
+				<td><%= Article.with_source(source.name).pluck(:facebook_shares).compact.sum %></td>
+				<td><%= Article.with_source(source.name).first.pub_date || '' %></td>
 				<td>
-					<span class="circle <%= source.articles.order('pub_date DESC').first.pub_date < 2.days.ago ? "-alert" : "-ok" %>"></span>
+					<span class="circle <%= Article.with_source(source.name).order('pub_date DESC').first.pub_date < 2.days.ago ? "-alert" : "-ok" %>"></span>
 				</td>
 				<td><%= link_to 'Editar', edit_source_path(source) %> | <%= link_to 'Apagar', source_path(source),
                     method: :delete, data: { confirm: 'Are you sure?' } %>

@@ -2,13 +2,11 @@
 
 <%= render 'partials/flash' %>
 
-<p><%= link_to 'New source', new_source_path %></p>
+<p><%= link_to 'Adicionar fonte', new_source_path %></p>
 
-<h3>Nacionais</h3>
-<%= render partial: 'partials/sources_table', locals: {sources: @national} %>
-
-<h3>Internationais</h3>
-<%= render partial: 'partials/sources_table', locals: {sources: @international} %>
-
-<h3>Blogues</h3>
-<%= render partial: 'partials/sources_table', locals: {sources: @blogs} %>
+<% cache(cache_key_for_sources, expires_in: 30.minutes) do %>
+  <% @sources.pluck(:source_type).uniq.each do |source_type| %>
+    <h3><%= source_type %></h3>
+    <%= render partial: 'partials/sources_table', locals: {sources: @sources.where(source_type: source_type)} %>
+  <% end %>
+<% end %>

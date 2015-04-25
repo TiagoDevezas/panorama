@@ -1,11 +1,20 @@
 Rails.application.routes.draw do
 
   namespace :api, defaults: { format: 'json' } do
-    resources :sources
-    resources :items
-    resources :feeds
-    resources :totals
-    resources :stats
+    get 'sources' => 'sources#index'
+    get 'items' => 'items#index'
+    get 'feeds' => 'feeds#index'
+    get 'totals' => 'totals#index'
+    get 'pf' => 'totals#photo_finish'
+    get 'stats' => 'stats#index'
+    get 'places' => 'places#index'
+    #resources :sources
+    #resources :items
+    #resources :feeds
+    #resources :totals
+    #get 'api/totals/pf' => 'totals#pf'
+    #resources :stats
+    #resources :places
   end
 
   resources :sources

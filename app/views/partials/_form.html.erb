@@ -11,22 +11,22 @@
 <%= nested_form_for @source do |f| %>
 	
 	<p>
-		<%= f.label :source_type %>
-		<%= select(:source, :source_type, [['Nacional', 'national'], ['Blog', 'blogs'], ['Internacional', 'international']]) %>
+		<%= f.label :source_type, 'Tipo de fonte' %>
+		<%= select(:source, :source_type, [['Nacional', 'national'], ['Blog', 'blogs'], ['Internacional', 'international'], ['Arquivo', 'archive']]) %>
 	</p>
 
 	<p>
-		<%= f.label :name %>
+		<%= f.label :name, 'Nome' %>
 		<%= f.text_field :name %>
 	</p>
 
 	<p>
-		<%= f.label :acronym %>
+		<%= f.label :acronym, 'Acrónimo' %>
 		<%= f.text_field :acronym %>
 	</p>
 
 	<p>
-		<%= f.label :url %>
+		<%= f.label :url, 'URL' %>
 		<%= f.text_field :url %>
 	</p>
 
@@ -34,27 +34,27 @@
 
 	<%= f.fields_for :feeds do |feeds_form| %>
 		<p>
-			<%= feeds_form.label :name %>
+			<%= feeds_form.label :name, 'Nome' %>
 			<%= feeds_form.text_field :name %>
 		</p>
 		
 		<p>
-			<%= feeds_form.label :url %>
+			<%= feeds_form.label :url, 'URL' %>
 			<%= feeds_form.text_field :url %>
 		</p>
 
 		<p>
-			<%= feeds_form.link_to_remove "Remove feed" %>
+			<%= feeds_form.link_to_remove "Remover feed" %>
 		</p>
 
 	<% end %>
 
-	<p><%= f.link_to_add "Add a feed", :feeds %></p>
+	<p><%= f.link_to_add "Adicionar feed", :feeds %></p>
 
 	<p>
-		<%= f.submit %>
+		<%= f.submit 'Guardar fonte' %>
 	</p>
 
 <% end %>
 
-<%= link_to 'Back', sources_path %>
+<%= link_to 'Voltar', sources_path %>

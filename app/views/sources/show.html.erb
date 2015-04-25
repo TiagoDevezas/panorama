@@ -2,15 +2,15 @@
 
 <%= render 'partials/flash' %>
 
-<%= link_to 'Edit', edit_source_path %>
+<%= link_to 'Editar fonte', edit_source_path %>
 
-<p>URL: <%= @source.url %></p>
+<p>URL: <%= link_to @source.url, @source.url %></p>
 
 <h2>Feeds</h2>
 
 <% @source.feeds.each do |feed| %>
 	<h4><%= feed.name %></h4> 
-	<p><%= link_to feed.url, feed.url %> | <%= feed.articles.count %> artigos | Última recolha em <%= feed.last_crawled %></p>
+	<p><%= link_to feed.url, feed.url %> | <%= feed.articles.size %> artigos | Última recolha em <%= feed.last_crawled %></p>
 	<table class="full-width tablesorter">
 		<thead>
 			<tr>

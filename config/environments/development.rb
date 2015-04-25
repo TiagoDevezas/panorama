@@ -1,5 +1,15 @@
 Rails.application.configure do
+
+  # config.relative_url_root = "/panorama"
   # Settings specified here will take precedence over those in config/application.rb.
+
+  # Configure Bullet gem
+  # config.after_initialize do
+  #   Bullet.enable = true
+  #   Bullet.alert = true
+  #   Bullet.bullet_logger = true
+  #   Bullet.console = true
+  # end
 
   # In the development environment your application's code is reloaded on
   # every request. This slows down response time but is perfect for development
@@ -7,7 +17,7 @@ Rails.application.configure do
   config.cache_classes = false
 
   # Do not eager load code on boot.
-  config.eager_load = false
+  config.eager_load = true
 
   # Show full error reports and disable caching.
   config.consider_all_requests_local       = true
@@ -23,10 +33,13 @@ Rails.application.configure do
   # Raise an error on page load if there are pending migrations.
   config.active_record.migration_error = :page_load
 
+  # Disable Rails's static asset server (Apache or nginx will already do this).
+  config.serve_static_assets = false
+
   # Debug mode disables concatenation and preprocessing of assets.
   # This option may cause significant delays in view rendering with a large
   # number of complex assets.
-  config.assets.debug = false
+  # config.assets.debug = false
 
   # Adds additional error checking when serving assets at runtime.
   # Checks for improperly declared sprockets dependencies.
@@ -35,4 +48,5 @@ Rails.application.configure do
 
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
+
 end

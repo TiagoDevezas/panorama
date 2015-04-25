@@ -14,6 +14,8 @@ module Api
 			category = params[:category]
 			type = params[:type]
 
+			sort = params[:sort]
+
 			if limit.to_i == -1
 				limit = nil
 			elsif limit.to_i >= 1
@@ -65,8 +67,11 @@ module Api
 			# 		@articles = @articles.with_category(category).limit(limit)
 			# 	end
 			# end
+			if sort && sort == 'asc'
+				@sort_ascending = true
+			end
 
-			check_time_constraints
+			@articles = check_time_constraints(@articles)
 
 			# fetch_or_create_cache(params.except(:callback), 10.minutes, @articles)
 

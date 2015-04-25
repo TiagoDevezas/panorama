@@ -21,6 +21,11 @@ json.array! @sources do |source|
 	json.type source.source_type
 	json.last_crawled source.feeds.order('last_crawled DESC').first.last_crawled
 	json.total_feeds source.feeds.count
+	json.feeds(source.feeds) do |feed|
+		json.id feed.id
+		json.name feed.name
+		json.url feed.url
+	end 
 	json.total_items article_count
 	json.total_shares total_shares 
 	json.twitter_shares twitter_shares
