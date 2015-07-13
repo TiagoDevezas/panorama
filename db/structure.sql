@@ -25,6 +25,31 @@ COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
 
 SET search_path = public, pg_catalog;
 
+--
+-- Name: articles_before_insert_update_row_tr(); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION articles_before_insert_update_row_tr() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    
+                  new.tsv_summary := to_tsvector('pg_catalog.simple', coalesce(new.summary,''));
+                  new.tsv_title := to_tsvector('pg_catalog.simple', coalesce(new.title,''));
+    RETURN NEW;
+END;
+$$;
+
+
+--
+-- Name: simple_pt_stopwords; Type: TEXT SEARCH DICTIONARY; Schema: public; Owner: -
+--
+
+CREATE TEXT SEARCH DICTIONARY simple_pt_stopwords (
+    TEMPLATE = pg_catalog.simple,
+    stopwords = 'portuguese' );
+
+
 SET default_tablespace = '';
 
 SET default_with_oids = false;
@@ -43,7 +68,10 @@ CREATE TABLE articles (
     updated_at timestamp without time zone,
     twitter_shares integer,
     facebook_shares integer,
-    summary text
+    summary text,
+    tsv_title tsvector,
+    tsv_summary tsvector,
+    entry_id character varying(255)
 );
 
 
@@ -248,20 +276,6 @@ ALTER TABLE ONLY sources
 
 
 --
--- Name: articles_summary_idx; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX articles_summary_idx ON articles USING gin (to_tsvector('simple'::regconfig, summary));
-
-
---
--- Name: articles_title_idx; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX articles_title_idx ON articles USING gin (to_tsvector('simple'::regconfig, (title)::text));
-
-
---
 -- Name: index_articles_cats_on_article_id_and_cat_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -276,6 +290,20 @@ CREATE INDEX index_articles_on_feed_id ON articles USING btree (feed_id);
 
 
 --
+-- Name: index_articles_on_tsv_summary; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_articles_on_tsv_summary ON articles USING gin (tsv_summary);
+
+
+--
+-- Name: index_articles_on_tsv_title; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_articles_on_tsv_title ON articles USING gin (tsv_title);
+
+
+--
 -- Name: index_feeds_on_source_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -287,6 +315,13 @@ CREATE INDEX index_feeds_on_source_id ON feeds USING btree (source_id);
 --
 
 CREATE UNIQUE INDEX unique_schema_migrations ON schema_migrations USING btree (version);
+
+
+--
+-- Name: articles_before_insert_update_row_tr; Type: TRIGGER; Schema: public; Owner: -
+--
+
+CREATE TRIGGER articles_before_insert_update_row_tr BEFORE INSERT OR UPDATE ON articles FOR EACH ROW EXECUTE PROCEDURE articles_before_insert_update_row_tr();
 
 
 --
@@ -346,4 +381,8 @@ INSERT INTO schema_migrations (version) VALUES ('20150328152556');
 INSERT INTO schema_migrations (version) VALUES ('20150328165413');
 
 INSERT INTO schema_migrations (version) VALUES ('20150420125533');
+
+INSERT INTO schema_migrations (version) VALUES ('20150509192201');
+
+INSERT INTO schema_migrations (version) VALUES ('20150626191914');
 

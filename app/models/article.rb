@@ -8,15 +8,13 @@ class Article < ActiveRecord::Base
 
   default_scope { order('pub_date DESC') }
 
-  # scope :published_between_with_date, -> (start_day) {
-  #   where("pub_date BETWEEN ? AND ?", 
-    #       start_day.to_datetime, start_day.to_datetime + 1)
-  # }
-
-  # scope :published_between_without_date, -> (start_day) {
-  #   where(pub_date: nil).where("articles.created_at BETWEEN ? AND ?", 
-    #       start_day.to_datetime, start_day.to_datetime + 1)
-  # }
+  def self.strip_html_from_summary
+    s = FeedCrawler.new
+    find_each do |article|
+      clean_summary = s.strip_html(article.summary)
+      article.update_attribute(:summary, clean_summary) if article.summary != clean_summary
+    end
+  end
 
   def self.find_duplicates
     dups_ids = []
@@ -51,23 +49,44 @@ class Article < ActiveRecord::Base
   end
 
   def self.find_in_title(query)
-    self.where("to_tsvector('simple', title) @@ to_tsquery('simple', :q)", q: sanitize(query))
+    where("tsv_title @@ #{sanitize_query(query)}") || nil
+    # self.where("tsv_title @@ to_tsquery('simple', :q)", q: sanitize(query))
     #self.where("lower(title) LIKE ?", "%#{query.downcase}%")
   end
 
   def self.find_in_summary(query)
-    self.where("to_tsvector('simple', summary) @@ to_tsquery('simple', :q)", q: sanitize(query))
+    where("tsv_summary @@ #{sanitize_query(query)}") || nil
+    # self.where("tsv_summary @@ to_tsquery('simple', :q)", q: sanitize(query))
     #self.where("lower(summary) LIKE ?", "%#{query.downcase}%")
   end
 
   def self.find_articles_with(query)
-    split_query = query.split(" ")
-    if !query[/[&||!]/] && split_query.length > 1
-      query = "#{sanitize(query)}"
-    end
-    self.where("to_tsvector('simple', title) @@ to_tsquery('simple', :q) OR to_tsvector('simple', summary) @@ to_tsquery('simple', :q)", q: query)
-    #self.where("to_tsvector('portuguese', title::text) @@ plainto_tsquery('portuguese', '#{query}'::text) OR to_tsvector('portuguese', summary::text) @@ plainto_tsquery('portuguese', '#{query}'::text)")
-    #self.where("title ilike :q or summary ilike :q", q: "%#{query}%")
+    where("tsv_title @@ #{sanitize_query(query)} OR tsv_summary @@ #{sanitize_query(query)}") || nil
+    # split_query = query.split(" ")
+    # if !query[/[&||!]/] && split_query.length > 1
+    #   query = "#{sanitize(query)}"
+    # end
+    # self.where("tsv_title @@ to_tsquery('simple', :q) OR tsv_summary @@ to_tsquery('simple', :q)", q: query)
+    # self.where("to_tsvector('simple', title) @@ to_tsquery('simple', :q) OR to_tsvector('simple', summary) @@ to_tsquery('simple', :q)", q: query)
+  end
+
+  def self.sanitize_query(query, conjunction=' && ')
+    "(" + tokenize_query(query).map {|t| term(t)}.join(conjunction) + ")"
+  end
+
+  def self.tokenize_query(query)
+    query.split(/(\s|[&|:])+/)
+  end
+
+  def self.term(t)
+    t = t.gsub(/^'+/,'')
+    t = t.gsub(/[()]/, '')
+
+    "to_tsquery('simple', #{quote_value t, nil})"
+  end
+
+  def self.search(query)
+    where("tsv_title @@ #{sanitize_query(query)} OR tsv_summary @@ #{sanitize_query(query)}")
   end
 
   def self.search_title_and_summary(query)
@@ -96,6 +115,58 @@ class Article < ActiveRecord::Base
 
   def category_list
     cats.map(&:name).join(', ')
+  end
+
+  def self.title_words
+    words = pluck('strip(tsv_title)').map {|a| !a.empty? ? a[1..-2].split('\' \'') : nil }.flatten.compact
+    count_words(words)
+  end
+
+  def self.summary_words
+    words = pluck('strip(tsv_summary)').map {|a| !a.empty? ? a[1..-2].split('\' \'') : nil }.flatten.compact
+    count_words(words)
+  end
+
+  def self.title_and_summary_words
+    words = pluck('strip(tsv_title)', 'strip(tsv_summary)').flatten.map {|a| !a.empty? ? a[1..-2].split('\' \'') : nil }.flatten.compact
+    count_words(words)
+  end
+
+  def self.count_words(words)
+    words.each_with_object(Hash.new(0)) { |word,counts| counts[word] += 1 }
+          .sort {|a,b| b[1]<=>a[1]}.to_h
+  end
+
+  def count_words(words)
+    words.each_with_object(Hash.new(0)) { |word,counts| counts[word] += 1 }
+          .sort {|a,b| b[1]<=>a[1]}.to_h
+  end
+
+  def title_words
+    words = Article.where(id: self.id).pluck('strip(tsv_title)')
+    if !words.empty?
+      words[0][1..-2].split('\' \'')
+    else
+      nil
+    end
+  end
+
+  def summary_words
+    words = Article.where(id: self.id).pluck('strip(tsv_summary)')
+    if !words.empty?
+      words[0][1..-2].split('\' \'')
+    else
+      nil
+    end
+  end
+
+  def title_and_summary_words
+    words = Article.where(id: self.id).pluck('strip(tsv_summary)').flatten
+    if !words.empty?
+      words[0][1..-2].split('\' \'')
+    else
+      nil
+    end
   end
 
   def self.get_unique_days
@@ -130,11 +201,12 @@ class Article < ActiveRecord::Base
     end   
   end
 
+
   def self.get_count_by(time_period)
     time_and_totals = []
     
     if time_period == 'day_only_count'
-      days_and_counts = self.reorder('').group("to_char(pub_date, 'YYYY-MM-DD')")
+      days_and_counts = reorder('').group("to_char(pub_date, 'YYYY-MM-DD')")
                            .select("to_char(pub_date, 'YYYY-MM-DD') as pubdate, COUNT(*) as article_count")
                            .order("to_char(pub_date, 'YYYY-MM-DD')")
                            .collect { |a| [a.pubdate, a.article_count] }
@@ -154,6 +226,8 @@ class Article < ActiveRecord::Base
 
       #date_hash = Hash[*days_and_counts.map { |i| [Date.strptime(i[0], '%Y-%m-%d'), i[1]]}.flatten]
       date_array = days_and_counts.map { |i| [Date.strptime(i[0], '%Y-%m-%d'), i[1], i[2], i[3]]}
+
+      return time_and_totals if !date_array[0]
 
       first_date = date_array[0].first
       last_date = date_array[-1].first
@@ -186,16 +260,25 @@ class Article < ActiveRecord::Base
       end
     end
     if time_period == 'month'
-      (1..12).to_a.each do |month|
-        months_and_counts = self.reorder('').where("extract(month from pub_date) = ?", month)
-                       .select("COUNT(*) as article_count, SUM(twitter_shares) as twitter_shares, SUM(facebook_shares) as facebook_shares")
-                       .collect { |a| [a.article_count, a.twitter_shares, a.facebook_shares] }[0]
+      months_and_counts = reorder('').group("extract(month from pub_date)")
+                                     .select("extract(month from pub_date) as month, 
+                                              COUNT(*) as article_count,
+                                              SUM(twitter_shares) as twitter_shares,
+                                              SUM(facebook_shares) as facebook_shares")
+                                     .collect { |a| [a.month.to_i, a.article_count, a.twitter_shares, a.facebook_shares]}
+
+      # (1..12).to_a.each do |month|
+      #   months_and_counts = self.reorder('').where("extract(month from pub_date) = ?", month)
+      #                  .select("COUNT(*) as article_count, SUM(twitter_shares) as twitter_shares, SUM(facebook_shares) as facebook_shares")
+      #                  .collect { |a| [a.article_count, a.twitter_shares, a.facebook_shares] }[0]
         # Workaround for P3 articles without publishing date. We use the updated_at date instead of the inexisting pub_date
         #articles_no_pub_date = self.where(pub_date: nil).where("extract(month from created_at) = ?", month)
         #articles += articles_no_pub_date
-        count = months_and_counts[0]
-        twitter_shares = months_and_counts[1] || 0
-        facebook_shares = months_and_counts[2] || 0
+      months_and_counts.each do |month, count, twitter_shares, facebook_shares|
+        month = month
+        count = count
+        twitter_shares = twitter_shares || 0
+        facebook_shares = facebook_shares || 0
         total_shares = twitter_shares + facebook_shares
         time_and_totals << Hash[ 
           time: month, 
@@ -205,18 +288,21 @@ class Article < ActiveRecord::Base
           total_shares: total_shares 
         ]
       end
+      # end
+      time_and_totals = fill_blanks(time_and_totals, (1..12))
     end
     if time_period == 'hour'
-      (0..23).to_a.each do |hour|
-        hours_and_counts = self.reorder('').where("extract(hour from pub_date) = ?", hour)
-                       .select("COUNT(*) as article_count, SUM(twitter_shares) as twitter_shares, SUM(facebook_shares) as facebook_shares")
-                       .collect { |a| [a.article_count, a.twitter_shares, a.facebook_shares] }[0]
-        # Workaround for P3 articles without publishing date. We use the updated_at date instead of the inexisting pub_date
-        #articles_no_pub_date = self.where(pub_date: nil).where("extract(hour from created_at) = ?", hour)
-        #articles += articles_no_pub_date
-        count = hours_and_counts[0]
-        twitter_shares = hours_and_counts[1] || 0
-        facebook_shares = hours_and_counts[2] || 0
+      hours_and_counts = reorder('').group("extract(hour from pub_date)")
+                                     .select("extract(hour from pub_date) as hour, 
+                                              COUNT(*) as article_count,
+                                              SUM(twitter_shares) as twitter_shares,
+                                              SUM(facebook_shares) as facebook_shares")
+                                     .collect { |a| [a.hour.to_i, a.article_count, a.twitter_shares, a.facebook_shares]}
+      hours_and_counts.each do |hour, count, twitter_shares, facebook_shares|
+        hour = hour
+        count = count
+        twitter_shares = twitter_shares || 0
+        facebook_shares = facebook_shares || 0
         total_shares = twitter_shares + facebook_shares
         time_and_totals << Hash[ 
           time: hour, 
@@ -226,26 +312,91 @@ class Article < ActiveRecord::Base
           total_shares: total_shares 
         ]
       end
+      time_and_totals = fill_blanks(time_and_totals, (0..23))
+      # (0..23).to_a.each do |hour|
+      #   hours_and_counts = self.reorder('').where("extract(hour from pub_date) = ?", hour)
+      #                  .select("COUNT(*) as article_count, SUM(twitter_shares) as twitter_shares, SUM(facebook_shares) as facebook_shares")
+      #                  .collect { |a| [a.article_count, a.twitter_shares, a.facebook_shares] }[0]
+      #   # Workaround for P3 articles without publishing date. We use the updated_at date instead of the inexisting pub_date
+      #   #articles_no_pub_date = self.where(pub_date: nil).where("extract(hour from created_at) = ?", hour)
+      #   #articles += articles_no_pub_date
+      #   count = hours_and_counts[0]
+      #   twitter_shares = hours_and_counts[1] || 0
+      #   facebook_shares = hours_and_counts[2] || 0
+      #   total_shares = twitter_shares + facebook_shares
+      #   time_and_totals << Hash[ 
+      #     time: hour, 
+      #     count: count, 
+      #     twitter_shares: twitter_shares, 
+      #     facebook_shares: facebook_shares, 
+      #     total_shares: total_shares 
+      #   ]
+      # end
     end
     if time_period == 'week'
-      (1..7).to_a.each do |weekday|
-        weekdays_and_counts = self.reorder('').where("extract(ISODOW from pub_date) = ?", weekday)
-                       .select("COUNT(*) as article_count, SUM(twitter_shares) as twitter_shares, SUM(facebook_shares) as facebook_shares")
-                       .collect { |a| [a.article_count, a.twitter_shares, a.facebook_shares] }[0]
-        count = weekdays_and_counts[0]
-        twitter_shares = weekdays_and_counts[1] || 0
-        facebook_shares = weekdays_and_counts[2] || 0
+      weekdays_and_counts = reorder('').group("extract(ISODOW from pub_date)")
+                                     .select("extract(ISODOW from pub_date) as weekday, 
+                                              COUNT(*) as article_count,
+                                              SUM(twitter_shares) as twitter_shares,
+                                              SUM(facebook_shares) as facebook_shares")
+                                     .collect { |a| [a.weekday.to_i, a.article_count, a.twitter_shares, a.facebook_shares]}
+      weekdays_and_counts.each do |weekday, count, twitter_shares, facebook_shares|
+        weekday = weekday
+        count = count
+        twitter_shares = twitter_shares || 0
+        facebook_shares = facebook_shares || 0
         total_shares = twitter_shares + facebook_shares
         time_and_totals << Hash[ 
           time: weekday, 
           count: count, 
           twitter_shares: twitter_shares, 
-          facebook_shares: facebook_shares,
+          facebook_shares: facebook_shares, 
           total_shares: total_shares 
         ]
       end
+      time_and_totals = fill_blanks(time_and_totals, (1..7))
+      # (1..7).to_a.each do |weekday|
+      #   weekdays_and_counts = self.reorder('').where("extract(ISODOW from pub_date) = ?", weekday)
+      #                  .select("COUNT(*) as article_count, SUM(twitter_shares) as twitter_shares, SUM(facebook_shares) as facebook_shares")
+      #                  .collect { |a| [a.article_count, a.twitter_shares, a.facebook_shares] }[0]
+      #   count = weekdays_and_counts[0]
+      #   twitter_shares = weekdays_and_counts[1] || 0
+      #   facebook_shares = weekdays_and_counts[2] || 0
+      #   total_shares = twitter_shares + facebook_shares
+      #   time_and_totals << Hash[ 
+      #     time: weekday, 
+      #     count: count, 
+      #     twitter_shares: twitter_shares, 
+      #     facebook_shares: facebook_shares,
+      #     total_shares: total_shares 
+      #   ]
+      # end
     end
     time_and_totals
+  end
+
+  private
+
+  def self.fill_blanks(collection, range)
+    collection = collection
+    range = range.to_a
+    collection_grouped_by_time = collection.group_by { |el| el[:time].to_i }
+
+    if collection_grouped_by_time.length != range.length
+      range.each do |el|
+        el = el.to_i
+        if(!collection_grouped_by_time[el])
+          collection << Hash[
+            time: el,
+            count: 0,
+            twitter_shares: 0,
+            facebook_shares: 0,
+            total_shares: 0
+          ]
+        end
+      end
+    end
+    collection.sort_by {|a| a[:time] }
   end
 
 end

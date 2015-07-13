@@ -1,6 +1,6 @@
 module Api
 	class PlacesController < ApplicationController
-		helper_method :convert_to_fips, :get_article_count
+		helper_method :convert_to_fips, :get_article_count, :check_for_dates
 		respond_to :json
 
 		caches_action :index, cache_path: Proc.new {|c| c.params.except(:callback) }, expires_in: 6.hour
@@ -12,6 +12,9 @@ module Api
 			if !map_type || map_type.downcase == 'portugal'
 				@district_list = []
 				Country.find_country_by_name('Portugal').subdivisions.each do |sub|
+					sub[1]['name'] = 'Açores'  if sub[0].to_s == '20'  
+					sub[1]['name'] = 'Madeira' if sub[0].to_s == '30' 
+
 					code = sub[0]
 					name = sub[1]['name']
 					count = get_article_count(name) if name
@@ -27,10 +30,24 @@ module Api
 				countries = Country.all
 				countries.each do |name, alpha2|
 					country = Country.find_country_by_alpha2(alpha2)
-					country_name = country.translation(lang)
+					country_name = country.translation(lang) ? country.translation(lang).split(',')[0] : nil
 					alpha2_code = country.alpha2
 					alpha3_code = country.alpha3
 					country_code = country.country_code
+					
+					if alpha3_code.to_s == 'RUS'
+						if lang == 'en'
+							country_name = 'Russia'
+						end
+						if lang == 'pt'
+							country_name = 'Rússia'
+						end
+					end
+
+					if alpha3_code.to_s == 'GBR' && lang == "en"
+						country_name = 'UK'
+					end
+						
 					count = get_article_count(country_name) if country_name
 					# count = Article.find_articles_with(country_name).count if country_name
 					@country_list << Hash[
@@ -50,18 +67,47 @@ module Api
 			type = params[:type]
 			if source
 				source = Source.where(name: source).empty? ? Source.where(acronym: source).first : Source.where(name: source).first
-				count = source.articles.find_articles_with(query).count
+				count = check_for_dates(source.articles, query)
+				# count = source.articles.find_articles_with(query).count
 			elsif type
-				count = Article.with_source_type(type).find_articles_with(query).count
+				count = check_for_dates(Article.with_source_type(type), query)
+				# count = Article.with_source_type(type).find_articles_with(query).count
 			else
-				count = Article.find_articles_with(query).count
+				count = check_for_dates(Article, query)
+				# count = Article.find_articles_with(query).count
 			end
 
 		end
 
-		def check_for_dates
+		def check_for_dates(articles, query)
 			start_date = params[:since]
 			end_date = params[:until]
+			q = params[:q]
+
+			if q
+				# query = query.gsub(/'/, {"'" => "\\'"})
+				# query = "'#{query}' & '#{q}'"
+				query = query + " " + q
+			end
+
+			if start_date && !end_date
+				count = articles.find_articles_with(query).where('pub_date >= ?', start_date.to_datetime).count
+			end
+
+			if end_date && !start_date
+				count = articles.find_articles_with(query).where('pub_date <= ?', end_date.to_datetime + 1.day).count
+			end
+
+			if start_date && end_date
+				count = articles.find_articles_with(query).where(
+					'pub_date BETWEEN ? AND ?', start_date.to_datetime, end_date.to_datetime + 1.day
+				).count
+			end
+
+			if !start_date && !end_date
+				count = articles.find_articles_with(query).count
+			end
+			count
 		end
 
 		def convert_to_fips(code)

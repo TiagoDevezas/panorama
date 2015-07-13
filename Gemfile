@@ -14,6 +14,8 @@ gem 'coffee-rails', '~> 4.0.0'
 # See https://github.com/sstephenson/execjs#readme for more supported runtimes
 # gem 'therubyracer',  platforms: :ruby
 
+gem 'hairtrigger'
+
 gem 'rufus-scheduler'
 
 gem 'countries'
@@ -30,7 +32,7 @@ gem 'dalli'
 #gem 'groupdate'
 
 # Faster JBuilder rendering
-gem 'yajl-ruby', require: 'yajl'
+# gem 'yajl-ruby', require: 'yajl'
 
 gem 'actionpack-action_caching'
 

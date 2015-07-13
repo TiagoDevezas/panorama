@@ -5,7 +5,7 @@ module CheckApiTimeConstraints
 		start_date = params[:since]
 		end_date = params[:until]
 
-		if start_date
+		if start_date && !end_date
 			articles_pub_date = articles.where('pub_date >= ?', start_date.to_datetime)
 			# Workaround for P3 articles without publishing date. We use the updated_at date instead of the inexisting pub_date
 			#articles_no_pub_date = @articles.where(pub_date: nil).where('articles.created_at >= ?', start_date.to_datetime)
@@ -14,7 +14,7 @@ module CheckApiTimeConstraints
 			#articles_pub_date
 		end
 
-		if end_date
+		if end_date && !start_date
 			articles_pub_date = articles.where('pub_date <= ?', end_date.to_datetime + 1.day)
 			#articles_no_pub_date = @articles.where(pub_date: nil).where('articles.created_at <= ?', end_date.to_datetime + 1.day)
 			#all_articles = articles_pub_date + articles_no_pub_date

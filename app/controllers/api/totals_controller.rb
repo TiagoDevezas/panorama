@@ -70,10 +70,14 @@ module Api
       if !by || by == 'day'
         @days_and_totals = @articles.get_count_by('day')
         if @all_type_articles
-          @days_and_totals_for_type = @all_type_articles.get_count_by('day')
+          @days_and_totals_for_type = Rails.cache.fetch('all_' + type.to_s + '_articles', expires_in: 6.hours) do
+            @all_type_articles.get_count_by('day')
+          end
         end
         if @all_source_articles
-          @days_and_totals_for_source = @all_source_articles.get_count_by('day')
+          @days_and_totals_for_source = Rails.cache.fetch('all_' + source.to_s + '_articles', expires_in: 6.hours) do
+            @all_source_articles.get_count_by('day')
+          end
         end
         # if @get_percent_of_source_type 
         #   first_date = @days_and_totals.first[:time]

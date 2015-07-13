@@ -1,5 +1,8 @@
 days_and_totals_for_type = @days_and_totals_for_type
 days_and_totals_for_source = @days_and_totals_for_source
+total_period_twitter_shares = @days_and_totals.map { |h| h[:twitter_shares]}.sum
+total_period_facebook_shares = @days_and_totals.map { |h| h[:facebook_shares]}.sum
+total_period_shares = total_period_twitter_shares + total_period_facebook_shares
 
 if @days_and_totals
 
@@ -44,8 +47,11 @@ if @days_and_totals
 			json.total_period_articles @time_period_count
 		end
 		json.twitter_shares el[:twitter_shares]
+		json.twitter_shares_percent ((el[:twitter_shares] / total_period_twitter_shares.to_f) * 100).round(2)
 		json.facebook_shares el[:facebook_shares]
+		json.facebook_shares_percent ((el[:facebook_shares] / total_period_facebook_shares.to_f) * 100).round(2)
 		json.total_shares el[:total_shares]
+		json.total_shares_percent ((el[:total_shares] / total_period_shares.to_f) * 100).round(2)
 	end
 	
 end
