@@ -13,6 +13,8 @@ module Api
       fields = params[:fields]
       category = params[:category]
       type = params[:type]
+      start_date = params[:since]
+      end_date = params[:until]
       
       @days_and_totals = []
 
@@ -64,19 +66,21 @@ module Api
         @articles = @articles.with_category(category)
       end
       @articles = check_time_constraints(@articles)
-      @all_type_articles = check_time_constraints(@all_type_articles) if @all_type_articles
-      @all_source_articles = check_time_constraints(@all_source_articles) if @all_source_articles
+      @all_type_articles_for_period = check_time_constraints(@all_type_articles) if @all_type_articles
+      @all_source_articles_for_period = check_time_constraints(@all_source_articles) if @all_source_articles
       #@time_period_count = @articles.size || nil
       if !by || by == 'day'
         @days_and_totals = @articles.get_count_by('day')
         if @all_type_articles
-          @days_and_totals_for_type = Rails.cache.fetch('all_' + type.to_s + '_articles', expires_in: 6.hours) do
+          @days_and_totals_for_type = Rails.cache.fetch("all_#{type.to_s}_articles", expires_in: 6.hours) do
+            # @all_type_articles_for_period.get_count_by('day')
             @all_type_articles.get_count_by('day')
           end
         end
         if @all_source_articles
-          @days_and_totals_for_source = Rails.cache.fetch('all_' + source.to_s + '_articles', expires_in: 6.hours) do
+          @days_and_totals_for_source = Rails.cache.fetch("all_#{source.to_s}_articles", expires_in: 6.hours) do
             @all_source_articles.get_count_by('day')
+            # @all_source_articles_for_period.get_count_by('day')
           end
         end
         # if @get_percent_of_source_type 

@@ -32,8 +32,8 @@ class FeedCrawler
 					end
 					
 					# Rails.logger.debug "Artigo com o url #{resolved_url} da fonte #{feed.source.name} já existe" if Article.where(url: resolved_url).exists?
-					if Article.exists?(entry_id: entry.url)
-						Rails.logger.debug "Artigo com o entry_id #{entry.entry_id} da fonte #{feed.source.name} já existe"
+					if Article.exists?(entry_id: entry.url) # || Article.exists?(url: entry.url)
+						Rails.logger.debug "Artigo com o entry_id #{entry.url} da fonte #{feed.source.name} já existe"
 						next
 					end
 					resolved_url = resolve_url(entry.url)
