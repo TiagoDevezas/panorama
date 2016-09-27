@@ -6,7 +6,7 @@ gem 'rails', '4.1.6'
 # Use postgresql as the database for Active Record
 gem 'pg'
 # Use SCSS for stylesheets
-gem 'sass-rails', '~> 4.0.3'
+gem 'sass-rails', '~> 5.0.0'
 # Use Uglifier as compressor for JavaScript assets
 gem 'uglifier', '>= 1.3.0'
 # Use CoffeeScript for .js.coffee assets and views
@@ -16,15 +16,18 @@ gem 'coffee-rails', '~> 4.0.0'
 
 gem 'hairtrigger'
 
-gem 'rufus-scheduler'
+gem 'rufus-scheduler', '~> 3.1.7'
 
 gem 'countries'
+
+# Rails Database Viewer and SQL Query Runner
+gem 'rails_db'
 
 # gem 'textacular', '~> 3.0'
 
 # Find N+1 Queries
-#gem 'bullet', :group => 'development'
-gem 'rack-mini-profiler', :group => 'development'
+# gem 'bullet', :group => 'development'
+# gem 'rack-mini-profiler', :group => 'development'
 
 # Memcached Dalli Store
 gem 'dalli'
@@ -32,17 +35,19 @@ gem 'dalli'
 #gem 'groupdate'
 
 # Faster JBuilder rendering
-# gem 'yajl-ruby', require: 'yajl'
+gem 'oj'
+gem 'oj_mimic_json'
 
+###
 gem 'actionpack-action_caching'
 
 gem 'nested_form'
 
 gem 'feedjira'
 
-gem 'bourbon'
+gem 'bourbon', "~> 3.2.4"
 
-gem 'neat'
+gem 'neat', "~> 1.6.0"
 
 gem 'addressable'
 
@@ -71,7 +76,7 @@ gem 'meta_request',  group: :development
 # gem 'bcrypt', '~> 3.1.7'
 
 # Use puma as the app server
-gem 'puma'
+gem 'puma', '~> 2.14.0'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development

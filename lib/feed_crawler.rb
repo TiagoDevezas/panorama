@@ -23,51 +23,38 @@ class FeedCrawler
 		parsed_feed = Feedjira::Feed.fetch_and_parse feed.url
 		if !parsed_feed.is_a? Integer
 			feed_entries = parsed_feed.entries
-			# safely do
-			#feed.update(last_modified: last_modified_time)
-				feed_entries.each do |entry|
-					if entry.published
-						next if entry.published.to_date <= Date.new(2014, 12, 05) || entry.published.to_date > Date.tomorrow
-						#next if entry.published.to_date > Date.tomorrow
-					end
-					
-					# Rails.logger.debug "Artigo com o url #{resolved_url} da fonte #{feed.source.name} já existe" if Article.where(url: resolved_url).exists?
-					if Article.exists?(entry_id: entry.url) # || Article.exists?(url: entry.url)
-						Rails.logger.debug "Artigo com o entry_id #{entry.url} da fonte #{feed.source.name} já existe"
-						next
-					end
-					resolved_url = resolve_url(entry.url)
-					if Article.exists?(url: resolved_url)
-						Rails.logger.debug "Artigo com o url #{resolved_url} da fonte #{feed.source.name} já existe"
-						next
-					end
-					Article.create do |article|
-						article.title = entry.title.strip
-						article.url = resolved_url.strip
-						article.pub_date = entry.published != nil ? entry.published : DateTime.now
-						article.summary = strip_html(entry.summary) || strip_html(entry.content) || ''
-						article.feed_id = feed.id
-						article.entry_id = entry.url || nil
-
-						if entry.categories.length > 0
-							entry.categories.each do |category|
-								cat = Cat.where(name: category.downcase.strip).first_or_create
-								cat.articles << article
-							end
-						end
-					end
+			feed_entries.each do |entry|
+				if entry.published
+					next if entry.published.to_date <= Date.new(2014, 12, 05) || entry.published.to_date > Date.tomorrow
+					#next if entry.published.to_date > Date.tomorrow
 				end
-			# end
+				
+				# Rails.logger.debug "Artigo com o url #{resolved_url} da fonte #{feed.source.name} já existe" if Article.where(url: resolved_url).exists?
+				if Article.exists?(url: entry.url) # || Article.exists?(url: entry.url)
+					Rails.logger.debug "Artigo com o entry_id #{entry.url} da fonte #{feed.source.name} já existe"
+					next
+				end
+				resolved_url = resolve_url(entry.url)
+				if Article.exists?(url: resolved_url)
+					Rails.logger.debug "Artigo com o url #{resolved_url} da fonte #{feed.source.name} já existe"
+					next
+				end
+				Article.create do |article|
+					article.title = entry.title != nil ? entry.title.strip : ''
+					article.url = resolved_url != nil ? resolved_url.strip : ''
+					article.pub_date = entry.published != nil ? entry.published : DateTime.now
+					article.summary = strip_html(entry.summary) || strip_html(entry.content) || ''
+					article.feed_id = feed.id
+					# if entry.categories.length > 0
+					# 	entry.categories.each do |category|
+					# 		cat = Cat.where(name: category.downcase.strip).first_or_create
+					# 		cat.articles << article
+					# 	end
+					# end
+				end
+			end
 		end
 	end
-
-	# def safely
-	# 	ActiveRecord::Base.connection_pool.with_connection do |conn|
-	# 		ActiveRecord::Base.connection_pool.reap
-	#     yield
-	#     ActiveRecord::Base.connection_pool.remove(conn)
-	#   end
-	# end
 
 	def strip_html(content)
 		if content

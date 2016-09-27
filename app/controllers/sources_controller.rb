@@ -24,7 +24,8 @@ class SourcesController < ApplicationController
 	end
 
 	def show
-		@source = Source.includes(:feeds => :articles).find(params[:id])
+		# @source = Source.includes(:feeds => :articles).find(params[:id])
+		@source = Source.find(params[:id])
 	end
 
 	def edit

@@ -24,7 +24,7 @@
 			</tr>			
 		</thead>
 		<tbody>
-			<% feed.articles.each do |article| %>
+			<% feed.articles.limit(10).each do |article| %>
 				<tr>
 					<td>
 

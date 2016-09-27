@@ -7,6 +7,9 @@
 # Ignore bundler config.
 /.bundle
 
+# Ignore rails_db config
+/config/initializers/rails_db.rd
+
 # Ignore the default SQLite database.
 /db/*.sqlite3
 /db/*.sqlite3-journal

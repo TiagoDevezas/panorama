@@ -1,11 +1,15 @@
 Rails.application.routes.draw do
 
+  resources :sources
+  resources :articles
+
   namespace :api, defaults: { format: 'json' } do
     get 'sources' => 'sources#index'
     get 'items' => 'items#index'
     get 'feeds' => 'feeds#index'
     get 'totals' => 'totals#index'
     get 'pf' => 'totals#photo_finish'
+    get 'wordcount' => 'totals#word_count'
     get 'stats' => 'stats#index'
     get 'places' => 'places#index'
     #resources :sources
@@ -16,9 +20,6 @@ Rails.application.routes.draw do
     #resources :stats
     #resources :places
   end
-
-  resources :sources
-  resources :articles
 
   get 'articles/duplicates' => 'articles#show'
 

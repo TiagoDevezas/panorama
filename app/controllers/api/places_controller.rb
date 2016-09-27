@@ -1,13 +1,15 @@
 module Api
 	class PlacesController < ApplicationController
+		caches_action :index, cache_path: Proc.new {|c| c.params.except(:callback) }, expires_in: 6.hour
+		
 		helper_method :convert_to_fips, :get_article_count, :check_for_dates
 		respond_to :json
 
-		caches_action :index, cache_path: Proc.new {|c| c.params.except(:callback) }, expires_in: 6.hour
 
 		def index
 			map_type = params[:map]
 			lang = params[:lang] || 'pt'
+			list = params[:listOnly]
 
 			if !map_type || map_type.downcase == 'portugal'
 				@district_list = []
@@ -17,12 +19,17 @@ module Api
 
 					code = sub[0]
 					name = sub[1]['name']
-					count = get_article_count(name) if name
+
+					if(list && list == 'true')
+						count = 0
+					else
+						count = get_article_count(name) if name
+					end
 					# count = Article.find_articles_with(name).count
 					@district_list << Hash[
 						name: name || nil,
 						code: convert_to_fips(code),
-						count: count
+						count: count || 0
 					]
 				end
 			elsif map_type == 'world'
@@ -47,8 +54,12 @@ module Api
 					if alpha3_code.to_s == 'GBR' && lang == "en"
 						country_name = 'UK'
 					end
-						
-					count = get_article_count(country_name) if country_name
+
+					if(list && list == 'true')
+						count = 0
+					else
+						count = get_article_count(country_name) if country_name
+					end
 					# count = Article.find_articles_with(country_name).count if country_name
 					@country_list << Hash[
 						name: country_name || nil,

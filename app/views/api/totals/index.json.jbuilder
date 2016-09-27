@@ -11,10 +11,12 @@ if @days_and_totals
 		json.articles el[:count]
 		if @source_article_count
 			if days_and_totals_for_source
-				json.total_articles_for_day days_and_totals_for_source.select { |obj| obj[:time] == el[:time]}[0][:count]
+				articles_for_day = days_and_totals_for_source.select { |obj| obj[:time] == el[:time]}[0][:count]
+				json.total_articles_for_day articles_for_day
+				json.percent_of_day ((el[:count] / articles_for_day.to_f) * 100).round(2)
 			end
 			json.total_source_articles @source_article_count
-			json.percent_of_source ((el[:count] / @source_article_count.to_f) * 100).round(2)
+			json.percent_of_source ((el[:count] / @source_article_count.to_f) * 100).round(2) || 0
 		end
 		if @type_article_count
 			if days_and_totals_for_type

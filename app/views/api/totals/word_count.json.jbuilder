@@ -1,0 +1,1 @@
+json.array! @articles_title_and_summary_words.take(100)

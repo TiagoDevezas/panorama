@@ -1,7 +1,7 @@
 module Api
 	class ItemsController < ApplicationController
 		include CheckApiTimeConstraints
-		include CacheConfig
+		# include CacheConfig
 		respond_to :json
 
 		def index
@@ -46,6 +46,7 @@ module Api
 					@articles = @articles.find_in_summary(query).limit(limit)
 				end
 			end
+			
 			if category
 				@articles = @articles.with_category(category).limit(limit)
 			end
@@ -72,8 +73,6 @@ module Api
 			end
 
 			@articles = check_time_constraints(@articles)
-
-			# fetch_or_create_cache(params.except(:callback), 10.minutes, @articles)
 
 		end
 

@@ -42,12 +42,21 @@ $$;
 
 
 --
+-- Name: simple_no_stopword; Type: TEXT SEARCH DICTIONARY; Schema: public; Owner: -
+--
+
+CREATE TEXT SEARCH DICTIONARY simple_no_stopword (
+    TEMPLATE = pg_catalog.simple,
+    stopwords = 'empty' );
+
+
+--
 -- Name: simple_pt_stopwords; Type: TEXT SEARCH DICTIONARY; Schema: public; Owner: -
 --
 
 CREATE TEXT SEARCH DICTIONARY simple_pt_stopwords (
     TEMPLATE = pg_catalog.simple,
-    stopwords = 'portuguese' );
+    stopwords = 'empty' );
 
 
 SET default_tablespace = '';
@@ -71,8 +80,10 @@ CREATE TABLE articles (
     summary text,
     tsv_title tsvector,
     tsv_summary tsvector,
-    entry_id character varying(255)
-);
+    entry_id character varying(255),
+    date_only character varying(255)
+)
+WITH (autovacuum_vacuum_scale_factor='0.0', autovacuum_vacuum_threshold='5000');
 
 
 --
@@ -283,6 +294,13 @@ CREATE UNIQUE INDEX index_articles_cats_on_article_id_and_cat_id ON articles_cat
 
 
 --
+-- Name: index_articles_on_date_only; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_articles_on_date_only ON articles USING btree (date_only);
+
+
+--
 -- Name: index_articles_on_feed_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -301,6 +319,13 @@ CREATE INDEX index_articles_on_tsv_summary ON articles USING gin (tsv_summary);
 --
 
 CREATE INDEX index_articles_on_tsv_title ON articles USING gin (tsv_title);
+
+
+--
+-- Name: index_articles_on_url; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE UNIQUE INDEX index_articles_on_url ON articles USING btree (url);
 
 
 --
@@ -385,4 +410,10 @@ INSERT INTO schema_migrations (version) VALUES ('20150420125533');
 INSERT INTO schema_migrations (version) VALUES ('20150509192201');
 
 INSERT INTO schema_migrations (version) VALUES ('20150626191914');
+
+INSERT INTO schema_migrations (version) VALUES ('20160909133346');
+
+INSERT INTO schema_migrations (version) VALUES ('20160909152332');
+
+INSERT INTO schema_migrations (version) VALUES ('20160910115707');
 

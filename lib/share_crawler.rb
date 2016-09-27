@@ -19,11 +19,12 @@ class ShareCrawler
 											 	.where(twitter_shares: nil).first
 			if article
 				http_client = HTTPClient.new
+				# twitter_url = "http://urls.api.twitter.com/1/urls/count.json?url="
 				twitter_url = "https://cdn.api.twitter.com/1/urls/count.json?url="
 		  	article_url = ERB::Util.url_encode(article.url.strip)
 		  	twitter_response = http_client.get(twitter_url + article_url)
 		  	twitter_shares = JSON.parse(twitter_response.body)['count']
-		  	shares = Hash['twitter' => twitter_shares] || 0
+		  	shares = Hash['twitter' => twitter_shares]
 		  	article.update(twitter_shares: shares['twitter'])
 			else
 				Rails.logger.error "[ERROR] getting Twitter shares"
@@ -43,8 +44,8 @@ class ShareCrawler
 		  	article_url = ERB::Util.url_encode(article.url)
 		  	url = "#{facebook_url}\"#{article_url}\""
 		  	facebook_response = http_client.get(url)
-		  	facebook_shares = JSON.parse(facebook_response.body)[0]['share_count']
-		  	shares = Hash['facebook' => facebook_shares] || 0
+		  	facebook_shares = JSON.parse(facebook_response.body)[0] ? JSON.parse(facebook_response.body)[0]['share_count'] : 0
+		  	shares = Hash['facebook' => facebook_shares]
 		  	article.update(facebook_shares: shares['facebook'])
 			else
 				Rails.logger.error "[ERROR] getting Facebook shares"

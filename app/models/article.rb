@@ -3,7 +3,8 @@ class Article < ActiveRecord::Base
   belongs_to :feed, counter_cache: true
   has_and_belongs_to_many :cats
 
-  validates :url, uniqueness: true, presence: true 
+  validates :url, uniqueness: true, presence: true
+  validates_format_of :url, with: URI::regexp(%w(http https))
   validates :title, presence: true
 
   default_scope { order('pub_date DESC') }
@@ -54,20 +55,40 @@ class Article < ActiveRecord::Base
     #self.where("lower(title) LIKE ?", "%#{query.downcase}%")
   end
 
+  def self.find_in_title_exact(query)
+    where("tsv_title @@ #{sanitize_query(query)} AND title ILIKE :q", q: "%#{query}%") || nil
+  end
+
   def self.find_in_summary(query)
     where("tsv_summary @@ #{sanitize_query(query)}") || nil
     # self.where("tsv_summary @@ to_tsquery('simple', :q)", q: sanitize(query))
     #self.where("lower(summary) LIKE ?", "%#{query.downcase}%")
   end
 
+  def self.find_in_summary_exact(query)
+    where("tsv_summary @@ #{sanitize_query(query)} AND summary ILIKE :q", q: "%#{query}%") || nil
+  end
+
   def self.find_articles_with(query)
-    where("tsv_title @@ #{sanitize_query(query)} OR tsv_summary @@ #{sanitize_query(query)}") || nil
+    logger.info(query)
+    logger.info(query.chars[0] == '"')
+    if query.chars[0] == '"' && query.chars[query.chars.length-1] == '"'
+      new_query = query.gsub(/"+/,'')
+      Article.find_articles_with_exact(new_query)
+    else
+      where("tsv_title @@ #{sanitize_query(query)} OR tsv_summary @@ #{sanitize_query(query)}") || nil
+    end
     # split_query = query.split(" ")
     # if !query[/[&||!]/] && split_query.length > 1
     #   query = "#{sanitize(query)}"
     # end
     # self.where("tsv_title @@ to_tsquery('simple', :q) OR tsv_summary @@ to_tsquery('simple', :q)", q: query)
     # self.where("to_tsvector('simple', title) @@ to_tsquery('simple', :q) OR to_tsvector('simple', summary) @@ to_tsquery('simple', :q)", q: query)
+  end
+
+  def self.find_articles_with_exact(query)
+    new_query = query.split(' ').join(' & ')
+    where("(tsv_title @@ #{sanitize_query(query)} AND title ILIKE :q) OR (tsv_summary @@ #{sanitize_query(query)} AND summary ILIKE :q)", q: "%#{query}%") || nil
   end
 
   def self.sanitize_query(query, conjunction=' && ')
@@ -220,10 +241,10 @@ class Article < ActiveRecord::Base
     end
     if time_period == 'day'  
       days_and_counts = self.reorder('').group("to_char(pub_date, 'YYYY-MM-DD')")
-                             .select("to_char(pub_date, 'YYYY-MM-DD') as pubdate, COUNT(*) as article_count, SUM(twitter_shares) as twitter_shares, SUM(facebook_shares) as facebook_shares")
+                             .select("COUNT(*) as article_count, to_char(pub_date, 'YYYY-MM-DD') as pubdate, SUM(twitter_shares) as twitter_shares, SUM(facebook_shares) as facebook_shares")
                              .order("to_char(pub_date, 'YYYY-MM-DD')")
                              .collect { |a| [a.pubdate, a.article_count, a.twitter_shares, a.facebook_shares] }
-
+                             
       #date_hash = Hash[*days_and_counts.map { |i| [Date.strptime(i[0], '%Y-%m-%d'), i[1]]}.flatten]
       date_array = days_and_counts.map { |i| [Date.strptime(i[0], '%Y-%m-%d'), i[1], i[2], i[3]]}
 

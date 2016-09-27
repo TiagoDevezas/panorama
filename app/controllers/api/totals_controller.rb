@@ -20,24 +20,17 @@ module Api
 
       if query
         if !fields
-          @articles = Article.find_articles_with(query)
-          #@query_article_count = @articles.size
+          @articles = Article.reorder('').find_articles_with(query)
         elsif fields == 'title'
-          @articles = Article.find_in_title(query)
-          #@query_article_count = @articles.size
+          @articles = Article.reorder('').find_in_title(query)
         elsif fields  == 'summary'
-          @articles = Article.find_in_summary(query)
-          #@query_article_count = @articles.size
+          @articles = Article.reorder('').find_in_summary(query)
         end
         if type
           @articles = @articles.with_source_type(type)
-          @query_article_count = @articles.size
+          # @query_article_count = @articles.size
           @all_type_articles = Article.with_source_type(type)
-          #@type_article_count = @all_type_articles.size
-          @type_article_count = true
-          # if type && (!by || by == 'day') 
-          #   #@get_percent_of_source_type = true if !@articles.empty?
-          # end
+          @type_article_count = @all_type_articles.size
         end
         if source
           source = Source.where(name: source).empty? ? Source.where(acronym: source).first : Source.where(name: source).first
@@ -46,6 +39,7 @@ module Api
           @query_article_count = @articles.size
           @source_article_count = source.articles.size
         end
+      #there's no query
       else
         if source
           source = Source.where(name: source).empty? ? Source.where(acronym: source).first : Source.where(name: source).first
@@ -98,6 +92,39 @@ module Api
       if by == 'week'
         @days_and_totals = @articles.get_count_by('week')
       end
+
+    end
+
+    def word_count
+
+      source = params[:source]
+      query = params[:q]
+      type = params[:type]
+      start_date = params[:since]
+      end_date = params[:until]
+
+      if query
+        @articles = Article.find_articles_with(query)
+        if type
+          @articles = @articles.with_source_type(type)
+        end
+        if source
+          source = Source.where(name: source).empty? ? Source.where(acronym: source).first : Source.where(name: source).first
+          @articles = @articles.joins(:feed => :source).where('sources.name LIKE ? OR sources.acronym LIKE ?', "#{source.name}", "#{source.acronym}")
+        end
+      else
+        if source
+          source = Source.where(name: source).empty? ? Source.where(acronym: source).first : Source.where(name: source).first
+          @articles = source.articles
+        elsif type
+          @articles = Article.with_source_type(type)
+        else
+          @articles = Article.all
+        end
+      end
+
+      @articles = check_time_constraints(@articles)
+      @articles_title_and_summary_words = @articles.title_and_summary_words
 
     end
 
