@@ -32,4 +32,12 @@ namespace :panorama do
 		share_crawler = ShareCrawler.new
 		share_crawler.get_social_shares('all')
 	end
+
+	desc "Actualiza índice do Solr usando um delta import"
+	task update_solr_index: :environment do
+		solr_core_data_import_url = "http://localhost:8983/solr/articles/dataimport?command=full-import&clean=false"
+		http_client = HTTPClient.new
+		http_client.get(solr_core_data_import_url)
+	end
+
 end

@@ -76,7 +76,8 @@ gem 'meta_request',  group: :development
 # gem 'bcrypt', '~> 3.1.7'
 
 # Use puma as the app server
-gem 'puma', '~> 2.14.0'
+# gem 'puma', '~> 2.14.0'
+gem 'puma'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
