@@ -34,6 +34,9 @@ Rails.application.configure do
   # Set logger level
   # config.log_level = :info
 
+  # Set logger max size to 50MB in development mode
+  config.logger = ActiveSupport::Logger.new(config.paths['log'].first, 1, 50 * 1024 * 1024)
+
   # Raise an error on page load if there are pending migrations.
   config.active_record.migration_error = :page_load
 
